@@ -1,6 +1,6 @@
-# AetherHire — Shared UI Components
+# RecruitAI — Shared UI Components
 
-> Built by **Developer 5** | Sprint 1  
+> Built by **Abdulrahman Nagah** | Sprint 1  
 > All components live in `src/components/ui/`  
 > Import directly from the file — no index barrel
 
@@ -663,7 +663,3 @@ Use them in your own components like this:
 <div className="bg-(--color-brand-teal)">Teal background</div>
 <div className="border-(--color-border)">Bordered div</div>
 ```
-
----
-
-> 💬 Questions? Contact **Developer 5**
