@@ -38,6 +38,7 @@ export const appRoutes = [
         element: <KanbanPipeline />,
       },
       {
+        // sboha kda l7ad ma a5ls kol ma y5os a pipline w kda 
         path: "/pipeline",
         element: <KanbanPipeline />,
       },
