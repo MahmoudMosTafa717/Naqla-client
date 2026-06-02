@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import CandidateProfileHeader from "../features/applications/CandidateProfileHeader";
 import AIScreeningSummary from "../features/applications/AIScreeningSummary";
 import WorkExperienceTimeline from "../features/applications/WorkExperienceTimeline";
@@ -8,6 +9,8 @@ import { ArrowLeft } from "lucide-react";
 import AIMatchScoreCircle from "../features/applications/AIMatchScoreCircle";
 import ApplicationDetails from "../features/applications/ApplicationDetails";
 import AIRecommendation from "../features/applications/AIRecommendation";
+import CandidateDetailsSkeleton from "../features/applications/CandidateDetailsSkeleton";
+
 const mockCandidate = {
   initials: "SJ",
   name: "Sarah Johnson",
@@ -33,7 +36,21 @@ const mockCandidate = {
   education: { degree: "BS in Computer Science", university: "Stanford University", meta: "Graduated 2018 • GPA: 3.8" },
   meta: { appliedDate: "May 15, 2024", status: "Applied", resumeName: "Sarah_Johnson_Resume.pdf", uploadedTime: "Uploaded 2 days ago" }
 };
+
 export default function CandidateDetails() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <CandidateDetailsSkeleton />;
+  }
+
   return (
     <div className="bg-slate-50/50 min-h-screen text-slate-800 font-sans py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
