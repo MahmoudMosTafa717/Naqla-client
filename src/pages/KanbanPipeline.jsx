@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PipelineHeader from '../features/piplines/components/PipelineHeader';
 import KanbanColumn from '../features/piplines/components/KanbanColumn';
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 const mockData = {
   
@@ -26,6 +27,40 @@ const mockData = {
 
 function KanbanPipeline() {
   const [loading, setLoading] = useState(false);
+  const [columns, setColumns] = useState(mockData);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    })
+  );
+  const handleDragEnd = (event) => {
+    const {active, over} = event;
+    if(!over) return;
+
+    const cardId = active.id;
+    const targetColumnId = over.id;
+    let sourceColumnId = null;
+
+    Object.keys(columns).forEach(colId => {
+      if (columns[colId].some(candidate => candidate.id === cardId)) {
+        sourceColumnId = colId;
+      }
+    });
+    if (sourceColumnId === targetColumnId) return;
+    const sourceColumn = [...columns[sourceColumnId]];
+    const targetColumn = [...columns[targetColumnId]];
+
+    const cardIndex = sourceColumn.findIndex(c => c.id === cardId);
+    const [movedCard] = sourceColumn.splice(cardIndex, 1);
+    targetColumn.push(movedCard);
+    setColumns({
+      ...columns,
+      [sourceColumnId]: sourceColumn,
+      [targetColumnId]: targetColumn
+    });
+
+
+  }
 
   if(loading) {
     return (
@@ -46,15 +81,16 @@ function KanbanPipeline() {
   return (
     <div className="p-6 bg-slate-50/50 min-h-screen text-gray-800 font-sans flex flex-col gap-6">
       <PipelineHeader />
-
-      <div className="flex gap-5 overflow-x-auto pb-6 select-none flex-1 items-start">
-        <KanbanColumn title="Applied" count={mockData.applied.length} candidates={mockData.applied} colorClass="border-t-blue-500" />
-        <KanbanColumn title="Shortlisted" count={mockData.shortlisted.length} candidates={mockData.shortlisted} colorClass="border-t-teal-400" />
-        <KanbanColumn title="Interview" count={mockData.interview.length} candidates={mockData.interview} colorClass="border-t-purple-500" />
-        <KanbanColumn title="Offer Sent" count={mockData.offerSent.length} candidates={mockData.offerSent} colorClass="border-t-amber-500" />
-        <KanbanColumn title="Hired" count={mockData.hired.length} candidates={mockData.hired} colorClass="border-t-emerald-500" />
-        <KanbanColumn title="Rejected" count={mockData.rejected.length} candidates={mockData.rejected} colorClass="border-t-red-500" />
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <div className="flex gap-5 overflow-x-auto pb-6 select-none flex-1 items-start">
+        <KanbanColumn id="applied" title="Applied" count={columns.applied.length} candidates={columns.applied} colorClass="border-t-blue-500" />
+        <KanbanColumn id="shortlisted" title="Shortlisted" count={columns.shortlisted.length} candidates={columns.shortlisted} colorClass="border-t-teal-400" />
+        <KanbanColumn id="interview" title="Interview" count={columns.interview.length} candidates={columns.interview} colorClass="border-t-purple-500" />
+        <KanbanColumn id="offerSent" title="Offer Sent" count={columns.offerSent.length} candidates={columns.offerSent} colorClass="border-t-amber-500" />
+        <KanbanColumn id="hired" title="Hired" count={columns.hired.length} candidates={columns.hired} colorClass="border-t-emerald-500" />
+        <KanbanColumn id="rejected" title="Rejected" count={columns.rejected.length} candidates={columns.rejected} colorClass="border-t-red-500" />
       </div>
+      </DndContext>
     </div>
   );
 }

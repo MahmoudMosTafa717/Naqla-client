@@ -1,8 +1,19 @@
+import React from 'react';
 import CandidateCard from './CandidateCard';
+import { useDroppable } from '@dnd-kit/core';
 
-function KanbanColumn({title, count, candidates, colorClass}) {
+function KanbanColumn({title, id, count, candidates, colorClass}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: id,
+  });
+
   return (
-    <div className='flex flex-col gap-3 w-[300px] sm:w-[340px] shrink-0'>
+    <div 
+      ref={setNodeRef} 
+      className={`flex flex-col gap-3 w-[300px] sm:w-[340px] shrink-0 p-2.5 rounded-2xl transition-all duration-200 border-2 ${
+        isOver ? 'bg-blue-50/40 border-blue-200/60 shadow-xs' : 'bg-transparent border-transparent'
+      }`}
+    >
       {/* Column Header Card */}
       <div className={`bg-white rounded-xl shadow-xs p-3.5 flex justify-between items-center border-t-4 ${colorClass}`}>
         <h3 className='font-bold text-slate-800 text-sm tracking-wide'>{title}</h3>
@@ -16,7 +27,7 @@ function KanbanColumn({title, count, candidates, colorClass}) {
             <CandidateCard key={candidate.id} candidateDate={candidate} />
           ))
         ) : (
-          <div className='flex items-center justify-center h-48 text-slate-400/80 text-xs font-medium'>
+          <div className='flex items-center justify-center h-48 text-slate-400/80 text-xs font-medium border-2 border-dashed border-slate-200/60 rounded-xl bg-white/50'>
             No candidates
           </div>
         )}

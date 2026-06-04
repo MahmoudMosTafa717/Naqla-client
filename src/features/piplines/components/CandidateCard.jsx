@@ -1,12 +1,29 @@
 import { MoreVertical, Mail, Phone, Calendar, AlertTriangle, Eye, Star } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
+import { useDraggable } from '@dnd-kit/core';
 import { AIScoreBadge } from '../../../components/ui/AIScoreBadge.jsx';
+import { useNavigate } from 'react-router-dom';
 
 function CandidateCard({candidateDate}) {
-  const {name, role , email, phone, appliedAt, score, skills,  location, experience , isStarred, redFlags, initials} = candidateDate || {};
+  const {name, role , id, email, phone, appliedAt, score, skills,  location, experience , isStarred, redFlags, initials} = candidateDate || {};
+  const navigate = useNavigate();
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: id,
+  });
+  
+  const dragStyle = transform ? {
+    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'grab',
+    zIndex: isDragging ? 50 : 1,
+  } : undefined
 
   return (
-    <div className='bg-white rounded-lg border border-gray-100 p-4  shadow-sm hover:shadow-md transition-all relative'>
+    <div 
+    ref={setNodeRef}
+    style={dragStyle}
+    {...attributes}
+    {...listeners}
+    className='bg-white rounded-lg border border-gray-100 p-4  shadow-sm hover:shadow-md transition-all relative'>
       {/* Header */}
       <div className='flex justify-between items-start mb-3 gap-2'>
         <div className='flex gap-3 items-center min-w-0'>
@@ -73,10 +90,16 @@ function CandidateCard({candidateDate}) {
 
       {/*actions*/}
       <div className='flex justify-between items-center pt-2 gap-2'>
-        <button className='flex-1 border border-[var(--color-brand-blue)] cursor-pointer text-[var(--color-brand-blue)] rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-[var(--color-brand-blue)] hover:text-white transition-colors flex items-center justify-center gap-1.5'>
+        <button 
+          onClick={(e) => { e.stopPropagation(); navigate('/CandidateDetails'); }} 
+          className='flex-1 border border-[var(--color-brand-blue)] cursor-pointer text-[var(--color-brand-blue)] rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-[var(--color-brand-blue)] hover:text-white transition-colors flex items-center justify-center gap-1.5'
+        >
           <Eye className="w-3.5 h-3.5" /> View
         </button>
-        <button className="p-1.5 text-gray-400 hover:text-gray-600 cursor-pointer shrink-0">
+        <button 
+          onClick={(e) => e.stopPropagation()} 
+          className="p-1.5 text-gray-400 hover:text-gray-600 cursor-pointer shrink-0"
+        >
           <MoreVertical className="w-4 h-4" />
         </button>
       </div>
