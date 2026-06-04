@@ -4,6 +4,7 @@ import DashboardLayout from "../components/layouts/DashboardLayout";
 import CandidateOnboardingGuard from "../components/auth/CandidateOnboardingGuard";
 import EmployerApprovedGuard from "../components/auth/EmployerApprovedGuard";
 import CandidateDetails from "../pages/CandidateDetails";
+import CandidateApplications from "../pages/CandidateApplications";
 
 const KanbanPipeline = lazy(() => import("../pages/KanbanPipeline"));
 const Dashboard = lazy(() => import("../pages/Dashboard"));
@@ -42,6 +43,10 @@ export const appRoutes = [
         // sboha kda l7ad ma a5ls kol ma y5os a pipline w kda 
         path: "/pipeline",
         element: <KanbanPipeline />,
+      },
+      {
+        path: "/applications",
+        element: <CandidateApplications />
       },
       {
         path: "/CandidateDetails",

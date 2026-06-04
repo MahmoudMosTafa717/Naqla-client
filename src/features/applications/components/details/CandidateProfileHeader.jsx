@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Briefcase, Star, CheckCircle2, Calendar, XCircle } from 'lucide-react';
-import { Button } from '../../components/ui/Button.jsx';
+import { Button } from '../../../../components/ui/Button.jsx';
 
 export default function CandidateProfileHeader({ candidate = {} }) {
   const { name, role, email, phone, appliedAt, score, skills, location, experienceYears, isStarred, redFlags, initials } = candidate || {};

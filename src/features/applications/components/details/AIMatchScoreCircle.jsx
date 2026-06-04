@@ -1,4 +1,5 @@
-import { AIScoreCircular } from "../../components/ui/AIScoreBadge";
+import { AIScoreCircular } from "../../../../components/ui/AIScoreBadge";
+
 
 export default function AIMatchScoreCircle({score}) {
   return (

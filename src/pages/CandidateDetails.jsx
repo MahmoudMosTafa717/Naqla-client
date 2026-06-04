@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import CandidateProfileHeader from "../features/applications/CandidateProfileHeader";
-import AIScreeningSummary from "../features/applications/AIScreeningSummary";
-import WorkExperienceTimeline from "../features/applications/WorkExperienceTimeline";
-import EducationSection from "../features/applications/EducationSection";
-import InternalNotesSection from "../features/applications/InternalNotesSection";
-import ResumeDownloadCard from "../features/applications/ResumeDownloadCard";
+import CandidateProfileHeader from "../features/applications/components/details/CandidateProfileHeader";
+import AIScreeningSummary from "../features/applications/components/details/AIScreeningSummary";
+import WorkExperienceTimeline from "../features/applications/components/details/WorkExperienceTimeline";
+import EducationSection from "../features/applications/components/details/EducationSection";
+import InternalNotesSection from "../features/applications/components/details/InternalNotesSection";
+import ResumeDownloadCard from "../features/applications/components/details/ResumeDownloadCard";
 import { ArrowLeft } from "lucide-react";
-import AIMatchScoreCircle from "../features/applications/AIMatchScoreCircle";
-import ApplicationDetails from "../features/applications/ApplicationDetails";
-import AIRecommendation from "../features/applications/AIRecommendation";
-import CandidateDetailsSkeleton from "../features/applications/CandidateDetailsSkeleton";
+import AIMatchScoreCircle from "../features/applications/components/details/AIMatchScoreCircle";
+import ApplicationDetails from "../features/applications/components/details/ApplicationDetails";
+import AIRecommendation from "../features/applications/components/details/AIRecommendation";
+import CandidateDetailsSkeleton from "../features/applications/components/details/CandidateDetailsSkeleton";
+import { useNavigate } from "react-router-dom";
 
 const mockCandidate = {
+  id:1,
   initials: "SJ",
   name: "Sarah Johnson",
   role: "Senior Frontend Developer",
@@ -39,6 +41,7 @@ const mockCandidate = {
 
 export default function CandidateDetails() {
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,7 +58,7 @@ export default function CandidateDetails() {
     <div className="bg-slate-50/50 min-h-screen text-slate-800 font-sans py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <button className="flex items-center gap-2 text-sm font-semibold text-blue-900 hover:text-blue-950 mb-6 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Pipeline
+          <ArrowLeft onClick={() => navigate(`/pipeline/${jobId}`)}  className="w-4 h-4" /> Back to Pipeline
         </button>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 space-y-6">

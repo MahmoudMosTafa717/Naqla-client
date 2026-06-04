@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Star } from 'lucide-react';
-import { Button } from '../../components/ui/Button.jsx';
+import { Button } from '../../../../components/ui/Button.jsx';
 
 export default function InternalNotesSection() {
    const [note, setNote] = useState('');
