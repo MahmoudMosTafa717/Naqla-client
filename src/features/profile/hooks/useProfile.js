@@ -105,6 +105,7 @@ export function useProfile({ pollParse = false, onProfileLoaded } = {}) {
 
   return {
     profile,
+    setProfile,
     loading,
     error,
     saving,

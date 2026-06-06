@@ -17,6 +17,7 @@ import {
   stage1Schema,
   stage1ToPayload,
   stage2Schema,
+  validateExperienceAndEducation,
 } from "../features/profile/schemas/profileSchemas";
 
 function normalizeExperience(list) {
@@ -50,6 +51,7 @@ export default function ProfileBuilder() {
   const [experience, setExperience] = useState([]);
   const [education, setEducation] = useState([]);
   const [skillsError, setSkillsError] = useState("");
+  const [editorErrors, setEditorErrors] = useState({ experience: [], education: [] });
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [resumeSubStep, setResumeSubStep] = useState("upload");
@@ -100,19 +102,24 @@ export default function ProfileBuilder() {
     await saveProfile(stage1ToPayload(values));
     setStep(2);
   });
-
   const handleStage2 = async () => {
     const parsed = stage2Schema.safeParse({ skills });
     if (!parsed.success) {
-      setSkillsError(parsed.error.errors[0]?.message || "Add at least one skill");
+      const msg = parsed.error.issues?.[0]?.message || parsed.error.errors?.[0]?.message || "Add at least one skill";
+      setSkillsError(msg);
       return;
     }
     setSkillsError("");
     await saveProfile({ skills });
     setStep(3);
-  };
+  };  const handleStage3 = async () => {
+    const validation = validateExperienceAndEducation(experience, education);
+    if (!validation.isValid) {
+      setEditorErrors(validation);
+      return;
+    }
+    setEditorErrors({ experience: [], education: [] });
 
-  const handleStage3 = async () => {
     const exp = experience.filter((e) => e.company || e.title);
     const edu = education.filter((e) => e.institution || e.degree);
     await saveProfile({
@@ -140,6 +147,14 @@ export default function ProfileBuilder() {
   };
 
   const handleFinish = async () => {
+    const validation = validateExperienceAndEducation(experience, education);
+    if (!validation.isValid) {
+      setEditorErrors(validation);
+      setStep(3);
+      return;
+    }
+    setEditorErrors({ experience: [], education: [] });
+
     const exp = experience.filter((e) => e.company || e.title);
     const edu = education.filter((e) => e.institution || e.degree);
     await saveProfile({
@@ -148,7 +163,7 @@ export default function ProfileBuilder() {
       education: normalizeEducation(edu),
       onboardingCompleted: true,
     });
-    navigate("/profile", { replace: true });
+    navigate("/candidate/dashboard", { replace: true });
   };
 
   if (loading) {
@@ -285,6 +300,8 @@ export default function ProfileBuilder() {
                 education={education}
                 onExperienceChange={setExperience}
                 onEducationChange={setEducation}
+                errors={editorErrors}
+                setErrors={setEditorErrors}
               />
             )}
 
@@ -329,6 +346,25 @@ export default function ProfileBuilder() {
               </Button>
             )}
             <div className="flex-1" />
+            {(step === 2 || step === 3) && (
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-slate-500 hover:text-slate-800"
+                disabled={saving}
+                onClick={() => {
+                  if (step === 2) {
+                    setSkillsError("");
+                    setStep(3);
+                  } else if (step === 3) {
+                    setEditorErrors({ experience: [], education: [] });
+                    setStep(4);
+                  }
+                }}
+              >
+                Skip for now
+              </Button>
+            )}
             {step < 4 && (
               <Button
                 type="button"
@@ -364,7 +400,7 @@ export default function ProfileBuilder() {
                 <Button
                   type="button"
                   variant="primary"
-                  disabled={saving || !profile?.resume?.url}
+                  disabled={saving}
                   onClick={handleFinish}
                 >
                   {saving ? (
