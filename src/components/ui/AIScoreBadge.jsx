@@ -71,7 +71,7 @@ export function AIScoreCircular({ score, size = 120, strokeWidth = 8 }) {
         <span className="text-2xl font-bold" style={{ color: getColor(score) }}>
           {score}%
         </span>
-        <span className="text-xs text-gray-500">AI Match</span>
+        <span className="text-xs text-gray-500">Completion</span>
       </div>
     </div>
   );

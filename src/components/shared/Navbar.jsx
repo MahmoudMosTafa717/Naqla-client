@@ -1,9 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, User, Settings, LogOut, Menu, Loader2, ChevronDown, Check, Plus, Building } from "lucide-react";
+import { Bell, User, Settings, LogOut, Menu, Loader2, ChevronDown, Check, Plus, Building, Bookmark } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useSignOut } from "../../hooks/useSignOut";
 import { useEmployerStore } from "../../store/employerStore";
+import { useProfile } from "../../features/profile/hooks/useProfile";
+
+function CandidateAvatar({ userName }) {
+  const { profile } = useProfile();
+  if (profile?.profilePicture?.url) {
+    return <img src={profile.profilePicture.url} alt={userName} className="w-8 h-8 rounded-full object-cover" />;
+  }
+  return (
+    <div className="w-8 h-8 bg-linear-to-br from-(--color-brand-blue) to-(--color-brand-teal) rounded-full flex items-center justify-center">
+      <span className="text-white text-sm font-medium">{userName?.[0] || "U"}</span>
+    </div>
+  );
+}
 
 export function Navbar({ userRole, userName }) {
   const navigate = useNavigate();
@@ -14,6 +27,26 @@ export function Navbar({ userRole, userName }) {
 
   const { memberships, activeCompanyId, activeCompany, fetchMemberships, setActiveCompanyId } = useEmployerStore();
   const [showWorkspaceMenu, setShowWorkspaceMenu] = React.useState(false);
+
+  const userMenuRef = React.useRef(null);
+  const notificationsRef = React.useRef(null);
+  const workspaceMenuRef = React.useRef(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+      if (workspaceMenuRef.current && !workspaceMenuRef.current.contains(event.target)) {
+        setShowWorkspaceMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   React.useEffect(() => {
     if (userRole === "employer" && memberships.length === 0) {
@@ -60,7 +93,7 @@ export function Navbar({ userRole, userName }) {
 
             {/* Workspace Switcher */}
             {userRole === "employer" && memberships.length > 0 && (
-              <div className="relative">
+              <div className="relative" ref={workspaceMenuRef}>
                 <button
                   onClick={() => {
                     setShowWorkspaceMenu(!showWorkspaceMenu);
@@ -226,7 +259,7 @@ export function Navbar({ userRole, userName }) {
             {userRole && (
               <>
                 {/* Notifications */}
-                <div className="relative">
+                <div className="relative" ref={notificationsRef}>
                   <button
                     onClick={() => {
                       setShowNotifications(!showNotifications);
@@ -261,7 +294,7 @@ export function Navbar({ userRole, userName }) {
                 </div>
 
                 {/* User menu */}
-                <div className="relative">
+                <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => {
                       setShowUserMenu(!showUserMenu);
@@ -269,11 +302,15 @@ export function Navbar({ userRole, userName }) {
                     }}
                     className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    <div className="w-8 h-8 bg-linear-to-br from-(--color-brand-blue) to-(--color-brand-teal) rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {userName?.[0] || "U"}
-                      </span>
-                    </div>
+                    {userRole === "candidate" ? (
+                      <CandidateAvatar userName={userName} />
+                    ) : (
+                      <div className="w-8 h-8 bg-linear-to-br from-(--color-brand-blue) to-(--color-brand-teal) rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">
+                          {userName?.[0] || "U"}
+                        </span>
+                      </div>
+                    )}
                   </button>
 
                   {showUserMenu && (
@@ -284,12 +321,26 @@ export function Navbar({ userRole, userName }) {
                           {userRole}
                         </p>
                       </div>
-                      <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          navigate(`/${userRole === "employer" ? "employer" : "candidate"}/profile`);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
+                      >
                         <User className="w-4 h-4" /> Profile
                       </button>
-                      <button className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2">
-                        <Settings className="w-4 h-4" /> Settings
-                      </button>
+                      {userRole === "candidate" && (
+                        <button
+                          onClick={() => {
+                            setShowUserMenu(false);
+                            navigate("/candidate/saved-jobs");
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
+                        >
+                          <Bookmark className="w-4 h-4" /> Saved Jobs
+                        </button>
+                      )}
                       <div className="border-t border-(--color-border) my-2"></div>
                       <button
                         type="button"
