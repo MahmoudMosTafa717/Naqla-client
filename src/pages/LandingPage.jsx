@@ -191,7 +191,7 @@ export default function LandingPage() {
       <Navbar userRole={user?.role} userName={user?.fullName || user?.email} />
 
       <main className="flex-1">
-        {/* ── Hero Section ───────────────────────────────────── */}
+        {/*   Hero Section   */}
         <section className="relative overflow-hidden py-20 lg:py-28">
           {/* Background gradient */}
           <div
@@ -296,7 +296,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── Why Choose Masar? ──────────────────────────────── */}
+        {/*   Why Choose Masar?                  */}
         <section id="features" className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             {/* Section header */}
@@ -318,7 +318,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── CTA Section ────────────────────────────────────── */}
+        {/*   CTA Section  ─ */}
         <section
           className="py-24 relative overflow-hidden"
           style={{
@@ -365,7 +365,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* ── Footer  ── */}
+      {/*   Footer    */}
       <footer className="bg-slate-900 text-slate-400 py-8">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
           <div className="flex items-center gap-2">
