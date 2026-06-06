@@ -13,7 +13,13 @@ const ProtectedLayout = () => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    const isPreviewPath =
+      window.location.pathname.startsWith("/pipeline") ||
+      window.location.pathname.startsWith("/uikit") ||
+      window.location.pathname.startsWith("/CandidateDetails");
+    if (!isPreviewPath) {
+      return <Navigate to="/login" replace />;
+    }
   }
 
   // Optional role based access check
@@ -26,7 +32,7 @@ const ProtectedLayout = () => {
       .flat()
       .at(-1);
 
-  if (allowedRoles && !allowedRoles.includes(user?.role)) {
+  if (isAuthenticated && allowedRoles && !allowedRoles.includes(user?.role)) {
     // return <Navigate to="/" replace />;
     return <Navigate to="/unauthorized" replace />;
 

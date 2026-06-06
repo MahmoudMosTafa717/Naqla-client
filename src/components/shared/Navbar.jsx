@@ -312,7 +312,7 @@ export function Navbar({ userRole, userName }) {
 
             {/* Guest buttons */}
             {!userRole && (
-              <div className="flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2">
                 <Button variant="ghost" onClick={() => navigate("/login")}>
                   Sign In
                 </Button>
@@ -397,21 +397,36 @@ export function Navbar({ userRole, userName }) {
                 </button>
               </>
             )}
-            <div className="border-t border-(--color-border) my-2 pt-2">
-              <button
-                type="button"
-                onClick={handleSignOut}
-                disabled={isLoading}
-                className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <LogOut className="w-4 h-4" />
-                )}
-                Sign Out
-              </button>
-            </div>
+            {/* Guest Mobile Buttons */}
+            {!userRole && (
+              <div className="flex flex-col gap-2 p-2 pt-4 border-t border-(--color-border)">
+                <Button variant="ghost" onClick={() => { setShowMobileMenu(false); navigate("/login"); }} className="w-full justify-center">
+                  Sign In
+                </Button>
+                <Button variant="primary" onClick={() => { setShowMobileMenu(false); navigate("/register"); }} className="w-full justify-center">
+                  Get Started
+                </Button>
+              </div>
+            )}
+
+            {/* Logged In Sign Out */}
+            {userRole && (
+              <div className="border-t border-(--color-border) my-2 pt-2">
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <LogOut className="w-4 h-4" />
+                  )}
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
