@@ -1,0 +1,62 @@
+export const mockRecommendations = [
+  {
+    id: "1",
+    title: "Senior Frontend Developer",
+    company: {
+      name: "TechCorp",
+      logo: "🚀",
+      industry: "Technology",
+      location: "San Francisco, CA",
+    },
+    location: "San Francisco, CA",
+    jobType: "remote",
+    employmentType: "full-time",
+    salaryRange: {
+      min: 120000,
+      max: 160000,
+      currency: "$",
+    },
+    aiScore: 92,
+    postedDays: 2,
+  },
+  {
+    id: "2",
+    title: "React Engineer",
+    company: {
+      name: "StartupXYZ",
+      logo: "⚡",
+      industry: "Software",
+      location: "Remote",
+    },
+    location: "Remote",
+    jobType: "remote",
+    employmentType: "full-time",
+    salaryRange: {
+      min: 100000,
+      max: 140000,
+      currency: "$",
+    },
+    aiScore: 88,
+    postedDays: 5,
+  },
+  {
+    id: "3",
+    title: "Full Stack Developer",
+    company: {
+      name: "Innovation Labs",
+      logo: "💡",
+      industry: "E-Commerce",
+      location: "New York, NY",
+    },
+    location: "New York, NY",
+    jobType: "hybrid",
+    employmentType: "full-time",
+    salaryRange: {
+      min: 110000,
+      max: 150000,
+      currency: "$",
+    },
+    aiScore: 85,
+    postedDays: 1,
+  },
+];
