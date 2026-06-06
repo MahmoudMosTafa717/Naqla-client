@@ -3,6 +3,7 @@ export function Badge({
   variant = "default",
   size = "sm",
   className = "",
+  ...props
 }) {
   const variants = {
     default: "bg-gray-100 text-gray-700 border-gray-200",
@@ -21,6 +22,7 @@ export function Badge({
   return (
     <span
       className={`inline-flex items-center rounded-full border font-medium ${variants[variant]} ${sizes[size]} ${className}`}
+      {...props}
     >
       {children}
     </span>
