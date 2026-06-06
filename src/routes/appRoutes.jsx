@@ -26,7 +26,6 @@ const JobFormPage = lazy(() => import("../pages/JobFormPage"));
 const CandidateDashboard = lazy(() => import("../pages/CandidateDashboard"));
 const JobSearch = lazy(() => import("../pages/JobSearch"));
 const JobDetail = lazy(() => import("../pages/JobDetail"));
-const MyApplications = lazy(() => import("../pages/MyApplications"));
 const SavedJobs = lazy(() => import("../pages/SavedJobs"));
 
 export const appRoutes = [
@@ -97,7 +96,7 @@ export const appRoutes = [
           },
           {
             path: "/candidate/applications",
-            element: <MyApplications />,
+            element: <CandidateApplications />,
             handle: { allowedRoles: ["candidate"] },
           },
           {
