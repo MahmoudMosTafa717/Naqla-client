@@ -84,7 +84,7 @@ export function Navbar({ userRole, userName }) {
               className="flex items-center gap-2 group"
             >
               <div className="w-10 h-10 bg-linear-to-br from-(--color-brand-blue) to-(--color-brand-teal) rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform">
-                <span className="text-white font-bold text-xl">A</span>
+                <span className="text-white font-bold text-xl">M</span>
               </div>
               <span className="text-xl font-bold bg-linear-to-r from-(--color-brand-blue) to-(--color-brand-teal) bg-clip-text text-transparent">
                 Masar

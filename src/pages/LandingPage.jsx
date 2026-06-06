@@ -375,7 +375,7 @@ export default function LandingPage() {
                 background: "linear-gradient(135deg, #1e3a8a, #14b8a6)",
               }}
             >
-              <span className="text-white font-bold text-sm">A</span>
+              <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="font-semibold text-white">Masar</span>
           </div>
