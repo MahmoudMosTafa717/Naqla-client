@@ -95,5 +95,10 @@ export async function getJobs(params = {}) {
 
 export async function getRecommendations() {
   const { data } = await apiClient.get("/recommendations/me");
-  return data?.data?.recommendations || [];
+  const raw = data?.data?.recommendations || [];
+  return raw.map(rec => ({
+    ...rec.job,
+    aiScore: rec.score,
+    aiReason: rec.reason
+  }));
 }
