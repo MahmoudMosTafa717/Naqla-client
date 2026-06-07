@@ -40,3 +40,25 @@
   /* Radius */
   --radius: 0.75rem;
 }
+
+/* React Toastify Custom Brand Styling */
+.Toastify__toast--info {
+  background: var(--color-brand-blue) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  font-family: inherit !important;
+}
+
+.Toastify__toast--info .Toastify__toast-icon svg {
+  fill: white !important;
+}
+
+.Toastify__progress-bar--info {
+  background: var(--color-brand-teal) !important;
+}
+
+/* Make sure all toasts use the brand font */
+.Toastify__toast {
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif !important;
+  border-radius: 12px !important;
+}

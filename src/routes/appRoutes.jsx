@@ -27,11 +27,16 @@ const CandidateDashboard = lazy(() => import("../pages/CandidateDashboard"));
 const JobSearch = lazy(() => import("../pages/JobSearch"));
 const JobDetail = lazy(() => import("../pages/JobDetail"));
 const SavedJobs = lazy(() => import("../pages/SavedJobs"));
+const Notifications = lazy(() => import("../pages/Notifications"));
 
 export const appRoutes = [
   {
     element: <DashboardLayout />,
     children: [
+      {
+        path: "/notifications",
+        element: <Notifications />,
+      },
       {
         path: "/jobs",
         element: <JobsManagement />,

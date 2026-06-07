@@ -3,6 +3,9 @@ import { RouterProvider } from "react-router-dom";
 import { Suspense, useEffect } from "react";
 import { router } from "./routes";
 import { useAuthStore } from "./store/authStore";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NotificationListener from "./components/shared/NotificationListener";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +58,8 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <NotificationListener />
+      <ToastContainer theme="light" />
       <Suspense
         fallback={<div className="p-5 text-center text-slate-500 font-medium">Loading Platform...</div>}
       >
