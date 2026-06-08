@@ -30,7 +30,10 @@ import {
   ChevronRight,
   Loader2,
   CheckCircle,
-  Sparkles,
+  PlusCircle,
+  Settings,
+  FolderOpen,
+  ArrowUpRight,
 } from "lucide-react";
 
 // ── SUB-COMPONENTS FOR CLEANER WORKSPACE ──
@@ -486,15 +489,6 @@ export default function EmployerDashboard() {
           <p className="text-sm text-slate-500 mt-1.5">{company?.description}</p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          {recentJobs?.[0] && (
-            <Button 
-              variant="outline" 
-              className="border-brand-teal text-brand-teal hover:bg-brand-teal/5 font-bold"
-              onClick={() => navigate(`/employer/company/${companyId}/ai-assistant/${recentJobs[0]._id}`)}
-            >
-              <Sparkles className="w-4 h-4" /> AI Recruitment Assistant
-            </Button>
-          )}
           <Button variant="outline" onClick={() => navigate(`/employer/company/${companyId}/jobs`)}>
             Manage Jobs
           </Button>
@@ -544,135 +538,8 @@ export default function EmployerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Columns - Recent Activities */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Recent Jobs */}
-          <Card className="border border-slate-100 shadow-sm rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Recent Jobs</h2>
-                <p className="text-xs text-slate-400">Manage latest job postings</p>
-              </div>
-              <Link
-                to={`/employer/company/${companyId}/jobs`}
-                className="text-sm font-semibold text-[var(--color-brand-blue)] hover:underline flex items-center gap-0.5"
-              >
-                View all <ChevronRight className="w-4 h-4" />
-              </Link>
-            </CardHeader>
-            <CardContent className="p-0">
-              {recentJobs?.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-sm">
-                  No jobs posted yet. Create your first job posting!
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-400 uppercase">
-                        <th className="px-6 py-3">Role</th>
-                        <th className="px-6 py-3">Type</th>
-                        <th className="px-6 py-3">Status</th>
-                        <th className="px-6 py-3">Created</th>
-                        <th className="px-6 py-3 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {recentJobs?.map((job) => (
-                        <tr key={job._id} className="hover:bg-slate-50/50">
-                          <td className="px-6 py-4 font-semibold text-slate-700">
-                            <Link to={`/employer/company/${companyId}/jobs`} className="hover:text-[var(--color-brand-blue)]">
-                              {job.title}
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 capitalize text-slate-500">
-                            {job.jobType} / {job.employmentType}
-                          </td>
-                          <td className="px-6 py-4">
-                            <Badge variant={job.status === "open" ? "success" : "default"}>
-                              {job.status}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4 text-slate-400">
-                            {new Date(job.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <Button 
-                              size="sm" 
-                              variant="ghost" 
-                              className="text-brand-teal hover:bg-brand-teal/5 font-bold gap-1.5"
-                              onClick={() => navigate(`/employer/company/${companyId}/ai-assistant/${job._id}`)}
-                            >
-                              <Sparkles className="w-3.5 h-3.5" /> HR Agent
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Applications */}
-          <Card className="border border-slate-100 shadow-sm rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Recent Applications</h2>
-                <p className="text-xs text-slate-400">Candidates applying to your jobs</p>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {recentApplications?.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-sm">
-                  No applications received yet.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-400 uppercase">
-                        <th className="px-6 py-3">Candidate</th>
-                        <th className="px-6 py-3">Job Role</th>
-                        <th className="px-6 py-3">Stage</th>
-                        <th className="px-6 py-3">AI Score</th>
-                        <th className="px-6 py-3">Applied</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {recentApplications?.map((app) => (
-                        <tr key={app._id} className="hover:bg-slate-50/50">
-                          <td className="px-6 py-4">
-                            <p className="font-semibold text-slate-700">{app.candidateId?.fullName}</p>
-                            <p className="text-xs text-slate-400">{app.candidateId?.email}</p>
-                          </td>
-                          <td className="px-6 py-4 text-slate-500 font-medium">
-                            {app.jobId?.title || "Deleted Job"}
-                          </td>
-                          <td className="px-6 py-4 capitalize">
-                            <Badge variant={app.stage?.key === "hired" ? "success" : app.stage?.key === "rejected" ? "error" : "warning"}>
-                              {app.stage?.key}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4">
-                            {app.aiScreening?.status === "completed" ? (
-                              <AIScoreBadge score={app.aiScreening?.overallScore} size="sm" />
-                            ) : (
-                              <span className="text-xs text-slate-400 font-medium capitalize">
-                                {app.aiScreening?.status || "queued"}
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-slate-400">
-                            {new Date(app.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <RecentJobsCard recentJobs={recentJobs} companyId={companyId} />
+          <RecentApplicationsCard recentApplications={recentApplications} />
         </div>
 
         {/* Right Sidebar - Actions & Members */}
