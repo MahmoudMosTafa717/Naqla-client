@@ -1,5 +1,4 @@
 import apiClient from "../config/axios.js";
-import { mockRecommendations } from "../mocks/recommendations.mock.js";
 
 export async function getJobsByCompany(companyId, params) {
   const filteredParams = Object.fromEntries(
@@ -95,10 +94,11 @@ export async function getJobs(params = {}) {
 }
 
 export async function getRecommendations() {
-  try {
-    const { data } = await apiClient.get("/jobs/recommendations");
-    return data;
-  } catch {
-    return { success: true, data: mockRecommendations };
-  }
+  const { data } = await apiClient.get("/recommendations/me");
+  const raw = data?.data?.recommendations || [];
+  return raw.map(rec => ({
+    ...rec.job,
+    aiScore: rec.score,
+    aiReason: rec.reason
+  }));
 }

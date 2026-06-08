@@ -1,22 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Bell,
-  User,
-  Settings,
-  LogOut,
-  Menu,
-  Loader2,
-  ChevronDown,
-  Check,
-  Plus,
-  Building,
-  Bookmark,
-} from "lucide-react";
+import { Bell, User, Settings, LogOut, Menu, Loader2, ChevronDown, Check, Plus, Building, Bookmark, Briefcase, Calendar, Info, ClipboardList } from "lucide-react";
 import { Button } from "../ui/Button";
 import { useSignOut } from "../../hooks/useSignOut";
 import { useEmployerStore } from "../../store/employerStore";
 import { useProfile } from "../../features/profile/hooks/useProfile";
+import { useNotificationStore } from "../../store/notificationStore";
 
 function CandidateAvatar({ userName }) {
   const { profile } = useProfile();
@@ -102,9 +91,7 @@ export function Navbar({ userRole, userName }) {
     await signOut();
   };
 
-  const notifications = [];
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  const { notifications, unreadCount, markRead } = useNotificationStore();
 
   return (
     <nav className="bg-white border-b border-(--color-border) sticky top-0 z-50 shadow-sm">
@@ -305,25 +292,90 @@ export function Navbar({ userRole, userName }) {
                     className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors relative">
                     <Bell className="w-5 h-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                      <span className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white px-1 shadow-sm">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
                     )}
                   </button>
 
                   {showNotifications && (
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-(--color-border) py-2 z-50">
-                      <div className="px-4 py-2 border-b border-(--color-border)">
+                      <div className="px-4 py-2 border-b border-(--color-border) flex items-center justify-between">
                         <h3 className="font-semibold text-sm">Notifications</h3>
+                        <button
+                          onClick={() => {
+                            setShowNotifications(false);
+                            navigate("/notifications");
+                          }}
+                          className="text-xs text-(--color-brand-blue) hover:underline font-medium"
+                        >
+                          See All
+                        </button>
                       </div>
-                      {notifications.map((notif) => (
-                        <div
-                          key={notif.id}
-                          className={`px-4 py-3 hover:bg-gray-50 cursor-pointer border-l-4 ${notif.unread ? "border-(--color-brand-teal) bg-blue-50/30" : "border-transparent"}`}>
-                          <p className="text-sm">{notif.text}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {notif.time}
-                          </p>
+                      <div className="max-h-96 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-gray-500">
+                            <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                            <p className="text-sm">No notifications</p>
+                          </div>
+                        ) : (
+                            notifications.slice(0, 5).map((notif) => {
+                              const getIcon = (type) => {
+                                switch (type) {
+                                  case "application": return <ClipboardList className="w-4 h-4 text-indigo-500" />;
+                                  case "job": return <Briefcase className="w-4 h-4 text-blue-500" />;
+                                  case "interview": return <Calendar className="w-4 h-4 text-teal-500" />;
+                                  case "system": return <Settings className="w-4 h-4 text-gray-500" />;
+                                  default: return <Info className="w-4 h-4 text-blue-500" />;
+                                }
+                              };
+                              return (
+                                <div
+                                  key={notif._id}
+                                  onClick={() => {
+                                    markRead(notif._id);
+                                    if (notif.link) navigate(notif.link);
+                                    setShowNotifications(false);
+                                  }}
+                                  className={`px-4 py-3 hover:bg-gray-50 cursor-pointer border-l-4 transition-all relative flex gap-3 ${
+                                    !notif.read ? "border-blue-500 bg-blue-50/40" : "border-transparent"
+                                  }`}
+                                >
+                                  <div className="shrink-0 mt-0.5">
+                                    {getIcon(notif.type)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className={`text-sm tracking-tight ${!notif.read ? "font-bold text-gray-900" : "font-semibold text-gray-600"}`}>
+                                      {notif.title}
+                                    </p>
+                                    <p className={`text-xs mt-0.5 line-clamp-2 ${!notif.read ? "text-gray-700 font-medium" : "text-gray-500"}`}>
+                                      {notif.message}
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 mt-1 font-medium">
+                                      {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                  </div>
+                                  {!notif.read && (
+                                    <div className="absolute right-3 top-3 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                  )}
+                                </div>
+                              );
+                            })
+                        )}
+                      </div>
+                      {notifications.length > 5 && (
+                        <div className="px-4 py-2 border-t border-(--color-border) text-center">
+                          <button
+                            onClick={() => {
+                              setShowNotifications(false);
+                              navigate("/notifications");
+                            }}
+                            className="text-xs text-gray-500 hover:text-(--color-brand-blue) font-medium"
+                          >
+                            View {notifications.length - 5} more
+                          </button>
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                 </div>
