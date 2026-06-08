@@ -10,6 +10,15 @@ import { Badge } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
 import { Skeleton } from "../components/ui/Skeleton";
+import { toast } from "react-toastify";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalFooter,
+} from "../components/ui/Modal";
 import {
   Search,
   RefreshCw,
@@ -33,6 +42,11 @@ export default function JobsManagement() {
   const { user } = useAuthStore();
   const { filters, setFilter, resetFilters } = useJobsStore();
   const [searchTerm, setSearchTerm] = useState(filters.search);
+
+  // States for delete job confirmation modal
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
+  const [jobTitleToDelete, setJobTitleToDelete] = useState("");
 
   // Sync route param with activeCompanyId if direct link was visited
   useEffect(() => {
@@ -71,9 +85,11 @@ export default function JobsManagement() {
     mutationFn: ({ jobId, status }) => updateJob(jobId, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries(["companyJobs", companyId]);
+      toast.success("Job status updated successfully.");
     },
     onError: (err) => {
-      alert(err.message || "Failed to update job status.");
+      const errorMsg = err.response?.data?.message || err.message || "Failed to update job status.";
+      toast.error(errorMsg);
     },
   });
 
@@ -82,9 +98,11 @@ export default function JobsManagement() {
     mutationFn: (jobId) => deleteJob(jobId),
     onSuccess: () => {
       queryClient.invalidateQueries(["companyJobs", companyId]);
+      toast.success("Job posting deleted successfully.");
     },
     onError: (err) => {
-      alert(err.message || "Failed to delete job.");
+      const errorMsg = err.response?.data?.message || err.message || "Failed to delete job.";
+      toast.error(errorMsg);
     },
   });
 
@@ -94,10 +112,11 @@ export default function JobsManagement() {
   };
 
   const handleDeleteJob = (jobId, title) => {
-    if (confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) {
-      deleteJobMutation.mutate(jobId);
-    }
+    setJobToDelete(jobId);
+    setJobTitleToDelete(title);
+    setIsDeleteModalOpen(true);
   };
+
 
   const handlePageChange = (newPage) => {
     setFilter("page", newPage);
@@ -350,6 +369,52 @@ export default function JobsManagement() {
           </div>
         )}
       </Card>
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <Modal open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitle className="text-slate-900 font-bold">Delete Job Posting</ModalTitle>
+              <ModalDescription className="text-slate-500 mt-2">
+                Are you sure you want to delete <span className="font-semibold text-slate-800">"{jobTitleToDelete}"</span>?
+                <br /><br />
+                This action cannot be undone.
+              </ModalDescription>
+            </ModalHeader>
+            <ModalFooter className="mt-6 flex flex-row justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setJobToDelete(null);
+                  setJobTitleToDelete("");
+                }}
+                disabled={deleteJobMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (jobToDelete) {
+                    deleteJobMutation.mutate(jobToDelete, {
+                      onSuccess: () => {
+                        setIsDeleteModalOpen(false);
+                        setJobToDelete(null);
+                        setJobTitleToDelete("");
+                      }
+                    });
+                  }
+                }}
+                disabled={deleteJobMutation.isPending}
+              >
+                {deleteJobMutation.isPending ? "Deleting..." : "Delete"}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   );
 }

@@ -475,19 +475,36 @@ export function Navbar({ userRole, userName }) {
             {userRole === "candidate" && (
               <>
                 <button
-                  onClick={() => navigate("/candidate/dashboard")}
+                  onClick={() => {
+                    setShowMobileMenu(false);
+                    navigate("/candidate/dashboard");
+                  }}
                   className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-gray-50 rounded-lg">
                   Dashboard
                 </button>
                 <button
-                  onClick={() => navigate("/candidate/jobs")}
+                  onClick={() => {
+                    setShowMobileMenu(false);
+                    navigate("/candidate/jobs");
+                  }}
                   className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-gray-50 rounded-lg">
                   Find Jobs
                 </button>
                 <button
-                  onClick={() => navigate("/candidate/applications")}
+                  onClick={() => {
+                    setShowMobileMenu(false);
+                    navigate("/candidate/applications");
+                  }}
                   className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-gray-50 rounded-lg">
                   My Applications
+                </button>
+                <button
+                  onClick={() => {
+                    setShowMobileMenu(false);
+                    navigate("/candidate/profile");
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-gray-50 rounded-lg">
+                  Profile
                 </button>
               </>
             )}
@@ -516,6 +533,14 @@ export function Navbar({ userRole, userName }) {
                   }}
                   className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-gray-50 rounded-lg">
                   Jobs
+                </button>
+                <button
+                  onClick={() => {
+                    setShowMobileMenu(false);
+                    navigate("/employer/profile");
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-gray-50 rounded-lg">
+                  Profile
                 </button>
               </>
             )}

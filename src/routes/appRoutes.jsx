@@ -15,6 +15,7 @@ const ProfileBuilder = lazy(() => import("../pages/ProfileBuilder"));
 const CandidateProfile = lazy(() => import("../pages/CandidateProfile"));
 const EmployerDashboard = lazy(() => import("../pages/EmployerDashboard"));
 const EmployerHrDashboard = lazy(() => import("../pages/EmployerHrDashboard"));
+const EmployerProfile = lazy(() => import("../pages/EmployerProfile"));
 const EmployerOnboarding = lazy(() => import("../pages/EmployerOnboarding"));
 const EmployerCompanyOnboarding = lazy(
   () => import("../pages/EmployerCompanyOnboarding"),
@@ -134,6 +135,11 @@ export const appRoutes = [
       {
         element: <EmployerApprovedGuard />,
         children: [
+          {
+            path: "/employer/profile",
+            element: <EmployerProfile />,
+            handle: { allowedRoles: ["employer"] },
+          },
           {
             path: "/employer/dashboard",
             element: <EmployerDashboard />,

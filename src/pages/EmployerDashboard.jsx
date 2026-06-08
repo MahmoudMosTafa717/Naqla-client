@@ -1,4 +1,4 @@
-import{ useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEmployerStore } from "../store/employerStore";
@@ -9,6 +9,7 @@ import { Card, CardHeader, CardContent } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Skeleton } from "../components/ui/Skeleton";
 import { AIScoreBadge } from "../components/ui/AIScoreBadge";
+import { toast } from "react-toastify";
 import {
   Modal,
   ModalContent,
@@ -29,7 +30,264 @@ import {
   ChevronRight,
   Loader2,
   CheckCircle,
+  PlusCircle,
+  Settings,
+  ArrowUpRight,
 } from "lucide-react";
+
+// ── SUB-COMPONENTS FOR CLEANER WORKSPACE ──
+
+function StatCard({ title, value, subtext, icon: Icon, colorClass, bgClass }) {
+  return (
+    <Card className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-slate-100 rounded-xl overflow-hidden">
+      <CardContent className="flex items-center gap-4 py-6">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${bgClass} ${colorClass}`}>
+          <Icon className="w-6 h-6" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</p>
+          <h3 className="text-2xl font-bold text-slate-800 mt-0.5">{value}</h3>
+          <p className="text-xs text-slate-500 mt-1">{subtext}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function QuickActionsCard({ onPostJob, onManageJobs, onViewProfile }) {
+  return (
+    <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden">
+      <CardHeader className="pb-3">
+        <h2 className="text-base font-bold text-slate-800">Quick Actions</h2>
+        <p className="text-xs text-slate-400">Common administrative tasks</p>
+      </CardHeader>
+      <CardContent className="grid grid-cols-1 gap-2.5">
+        <Button
+          onClick={onPostJob}
+          variant="primary"
+          className="w-full justify-start text-sm py-2 px-3 shadow-xs hover:shadow-sm"
+        >
+          <PlusCircle className="w-4 h-4 mr-1.5" /> Post a New Job
+        </Button>
+        <Button
+          onClick={onManageJobs}
+          variant="outline"
+          className="w-full justify-start text-sm py-2 px-3 hover:bg-slate-50"
+        >
+          <Briefcase className="w-4 h-4 mr-1.5" /> Manage Job Postings
+        </Button>
+        <Button
+          onClick={onViewProfile}
+          variant="ghost"
+          className="w-full justify-start text-sm py-2 px-3 border border-slate-100 hover:bg-slate-50 text-slate-700 hover:text-slate-900"
+        >
+          <Settings className="w-4 h-4 mr-1.5 text-slate-400" /> View Company Profile
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RecentJobsCard({ recentJobs, companyId }) {
+  return (
+    <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <h2 className="text-base font-bold text-slate-800">Recent Jobs</h2>
+          <p className="text-xs text-slate-400">View and track latest postings</p>
+        </div>
+        <Link
+          to={`/employer/company/${companyId}/jobs`}
+          className="text-xs font-semibold text-[var(--color-brand-blue)] hover:underline flex items-center gap-0.5"
+        >
+          View all <ChevronRight className="w-3.5 h-3.5" />
+        </Link>
+      </CardHeader>
+      <CardContent className="p-0">
+        {recentJobs?.length === 0 ? (
+          <div className="p-8 text-center text-slate-400 text-sm">
+            No jobs posted yet. Create your first job posting!
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-400 uppercase">
+                  <th className="px-6 py-3">Role</th>
+                  <th className="px-6 py-3">Type</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Created</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {recentJobs?.map((job) => (
+                  <tr key={job._id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-6 py-4 font-semibold text-slate-700">
+                      <Link
+                        to={`/employer/company/${companyId}/jobs`}
+                        className="hover:text-[var(--color-brand-blue)] flex items-center gap-1 group"
+                      >
+                        {job.title}
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4 capitalize text-slate-500 whitespace-nowrap">
+                      {job.jobType} / {job.employmentType}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge variant={job.status === "open" ? "success" : "default"}>
+                        {job.status}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-slate-400 whitespace-nowrap">
+                      {new Date(job.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function RecentApplicationsCard({ recentApplications }) {
+  return (
+    <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <h2 className="text-base font-bold text-slate-800">Recent Applications</h2>
+          <p className="text-xs text-slate-400">Latest candidate matches</p>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        {recentApplications?.length === 0 ? (
+          <div className="p-8 text-center text-slate-400 text-sm">
+            No applications received yet.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-400 uppercase">
+                  <th className="px-6 py-3">Candidate</th>
+                  <th className="px-6 py-3">Job Role</th>
+                  <th className="px-6 py-3">Stage</th>
+                  <th className="px-6 py-3">AI Score</th>
+                  <th className="px-6 py-3">Applied</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {recentApplications?.map((app) => (
+                  <tr key={app._id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <p className="font-semibold text-slate-700 leading-tight">
+                        {app.candidateId?.fullName}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-0.5">{app.candidateId?.email}</p>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 font-medium whitespace-nowrap">
+                      {app.jobId?.title || "Deleted Job"}
+                    </td>
+                    <td className="px-6 py-4 capitalize whitespace-nowrap">
+                      <Badge
+                        variant={
+                          app.stage?.key === "hired"
+                            ? "success"
+                            : app.stage?.key === "rejected"
+                            ? "error"
+                            : "warning"
+                        }
+                      >
+                        {app.stage?.key}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {app.aiScreening?.status === "completed" ? (
+                        <AIScoreBadge score={app.aiScreening?.overallScore} size="sm" />
+                      ) : (
+                        <span className="text-xs text-slate-400 font-medium capitalize">
+                          {app.aiScreening?.status || "queued"}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-slate-400 whitespace-nowrap">
+                      {new Date(app.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function TeamMembersCard({ team, isOwner, onInviteOpen, onRemoveHR, pendingRemove }) {
+  return (
+    <Card className="border border-slate-100 shadow-sm rounded-xl overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <div>
+          <h2 className="text-base font-bold text-slate-800">Team Members</h2>
+          <p className="text-xs text-slate-400">Recruiter permissions</p>
+        </div>
+        {isOwner && (
+          <Button size="sm" onClick={onInviteOpen} className="px-3 py-1.5 text-xs">
+            <Plus className="w-3.5 h-3.5 mr-0.5" /> Invite HR
+          </Button>
+        )}
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {team?.map((member) => (
+          <div
+            key={member._id}
+            className="flex items-center justify-between p-3 rounded-lg border border-slate-50 bg-slate-50/30 hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className="w-9 h-9 rounded-full text-white flex items-center justify-center font-bold text-sm shrink-0"
+                style={{
+                  background: "linear-gradient(135deg, #1e3a8a, #14b8a6)",
+                }}
+              >
+                {member.user?.fullName?.[0] || "U"}
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-slate-800 text-sm truncate leading-tight">
+                  {member.user?.fullName}
+                </p>
+                <p className="text-xs text-slate-400 truncate mt-0.5">
+                  {member.user?.email}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Badge size="sm" variant={member.role === "owner" ? "purple" : "default"}>
+                    {member.role}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            {isOwner && member.role === "hr" && (
+              <button
+                onClick={() => onRemoveHR(member.user?._id, member.user?.fullName)}
+                disabled={pendingRemove}
+                className="p-1.5 text-slate-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50"
+                title="Remove HR"
+              >
+                <UserX className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── MAIN EMPLOYER DASHBOARD PAGE ──
 
 export default function EmployerDashboard() {
   const { companyId } = useParams();
@@ -47,6 +305,11 @@ export default function EmployerDashboard() {
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [inviteError, setInviteError] = useState("");
   const [inviteSuccess, setInviteSuccess] = useState("");
+
+  // Remove HR modal confirmation state
+  const [isRemoveHrOpen, setIsRemoveHrOpen] = useState(false);
+  const [hrToRemoveId, setHrToRemoveId] = useState(null);
+  const [hrToRemoveName, setHrToRemoveName] = useState("");
 
   // Sync route param with Zustand active company state
   useEffect(() => {
@@ -91,13 +354,16 @@ export default function EmployerDashboard() {
       setInviteEmail("");
       setInviteError("");
       queryClient.invalidateQueries(["companyDashboard", companyId]);
+      toast.success("HR Recruiter invited successfully.");
       setTimeout(() => {
         setIsInviteOpen(false);
         setInviteSuccess("");
       }, 2000);
     },
     onError: (err) => {
-      setInviteError(err.message || "Failed to invite HR.");
+      const errorMsg = err.message || "Failed to invite HR.";
+      setInviteError(errorMsg);
+      toast.error(errorMsg);
     },
   });
 
@@ -106,9 +372,11 @@ export default function EmployerDashboard() {
     mutationFn: (hrUserId) => removeHR(companyId, hrUserId),
     onSuccess: () => {
       queryClient.invalidateQueries(["companyDashboard", companyId]);
+      toast.success("HR Recruiter removed successfully.");
     },
     onError: (err) => {
-      alert(err.message || "Failed to remove HR member.");
+      const errorMsg = err.message || "Failed to remove HR member.";
+      toast.error(errorMsg);
     },
   });
 
@@ -118,9 +386,21 @@ export default function EmployerDashboard() {
     inviteHRMutation.mutate(inviteEmail.trim());
   };
 
-  const handleRemoveHR = (hrUserId, hrName) => {
-    if (confirm(`Are you sure you want to remove ${hrName} from the company?`)) {
-      removeHRMutation.mutate(hrUserId);
+  const handleRemoveHRTrigger = (hrUserId, hrName) => {
+    setHrToRemoveId(hrUserId);
+    setHrToRemoveName(hrName);
+    setIsRemoveHrOpen(true);
+  };
+
+  const handleConfirmRemoveHR = () => {
+    if (hrToRemoveId) {
+      removeHRMutation.mutate(hrToRemoveId, {
+        onSuccess: () => {
+          setIsRemoveHrOpen(false);
+          setHrToRemoveId(null);
+          setHrToRemoveName("");
+        },
+      });
     }
   };
 
@@ -219,230 +499,62 @@ export default function EmployerDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="flex items-center gap-4 py-6">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-[var(--color-brand-blue)] flex items-center justify-center shrink-0">
-              <Briefcase className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase">Jobs</p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-0.5">{stats?.activeJobs} active</h3>
-              <p className="text-xs text-slate-500 mt-1">{stats?.totalJobs} total jobs posted</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="flex items-center gap-4 py-6">
-            <div className="w-12 h-12 rounded-xl bg-teal-50 text-[var(--color-brand-teal)] flex items-center justify-center shrink-0">
-              <FileText className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase">Applications</p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-0.5">{stats?.totalApplications}</h3>
-              <p className="text-xs text-slate-500 mt-1">Candidates applied</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="flex items-center gap-4 py-6">
-            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <TrendingUp className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase">Pipeline Status</p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-0.5">{stats?.hiredCount} hired</h3>
-              <p className="text-xs text-slate-500 mt-1">{stats?.interviewingCount} in interviews</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="flex items-center gap-4 py-6">
-            <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
-              <Brain className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase">Avg. AI Match Score</p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-0.5">
-                {stats?.averageAiScore ? `${stats.averageAiScore}%` : "N/A"}
-              </h3>
-              <p className="text-xs text-slate-500 mt-1">AI screening completed</p>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Jobs"
+          value={`${stats?.activeJobs || 0} Active`}
+          subtext={`${stats?.totalJobs || 0} total jobs posted`}
+          icon={Briefcase}
+          colorClass="text-[var(--color-brand-blue)]"
+          bgClass="bg-blue-50/80"
+        />
+        <StatCard
+          title="Applications"
+          value={stats?.totalApplications || 0}
+          subtext="Candidates applied"
+          icon={FileText}
+          colorClass="text-[var(--color-brand-teal)]"
+          bgClass="bg-teal-50/80"
+        />
+        <StatCard
+          title="Pipeline Status"
+          value={`${stats?.hiredCount || 0} hired`}
+          subtext={`${stats?.interviewingCount || 0} in interviews`}
+          icon={TrendingUp}
+          colorClass="text-purple-600"
+          bgClass="bg-purple-50/80"
+        />
+        <StatCard
+          title="Avg. AI Match Score"
+          value={stats?.averageAiScore ? `${stats.averageAiScore}%` : "N/A"}
+          subtext="AI screening completed"
+          icon={Brain}
+          colorClass="text-green-600"
+          bgClass="bg-green-50/80"
+        />
       </div>
 
       {/* Main Dashboard Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Columns - Recent Activities */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Recent Jobs */}
-          <Card className="border border-slate-100 shadow-sm rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Recent Jobs</h2>
-                <p className="text-xs text-slate-400">Manage latest job postings</p>
-              </div>
-              <Link
-                to={`/employer/company/${companyId}/jobs`}
-                className="text-sm font-semibold text-[var(--color-brand-blue)] hover:underline flex items-center gap-0.5"
-              >
-                View all <ChevronRight className="w-4 h-4" />
-              </Link>
-            </CardHeader>
-            <CardContent className="p-0">
-              {recentJobs?.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-sm">
-                  No jobs posted yet. Create your first job posting!
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-400 uppercase">
-                        <th className="px-6 py-3">Role</th>
-                        <th className="px-6 py-3">Type</th>
-                        <th className="px-6 py-3">Status</th>
-                        <th className="px-6 py-3">Created</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {recentJobs?.map((job) => (
-                        <tr key={job._id} className="hover:bg-slate-50/50">
-                          <td className="px-6 py-4 font-semibold text-slate-700">
-                            <Link to={`/employer/company/${companyId}/jobs`} className="hover:text-[var(--color-brand-blue)]">
-                              {job.title}
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 capitalize text-slate-500">
-                            {job.jobType} / {job.employmentType}
-                          </td>
-                          <td className="px-6 py-4">
-                            <Badge variant={job.status === "open" ? "success" : "default"}>
-                              {job.status}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4 text-slate-400">
-                            {new Date(job.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Applications */}
-          <Card className="border border-slate-100 shadow-sm rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Recent Applications</h2>
-                <p className="text-xs text-slate-400">Candidates applying to your jobs</p>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {recentApplications?.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-sm">
-                  No applications received yet.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-400 uppercase">
-                        <th className="px-6 py-3">Candidate</th>
-                        <th className="px-6 py-3">Job Role</th>
-                        <th className="px-6 py-3">Stage</th>
-                        <th className="px-6 py-3">AI Score</th>
-                        <th className="px-6 py-3">Applied</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {recentApplications?.map((app) => (
-                        <tr key={app._id} className="hover:bg-slate-50/50">
-                          <td className="px-6 py-4">
-                            <p className="font-semibold text-slate-700">{app.candidateId?.fullName}</p>
-                            <p className="text-xs text-slate-400">{app.candidateId?.email}</p>
-                          </td>
-                          <td className="px-6 py-4 text-slate-500 font-medium">
-                            {app.jobId?.title || "Deleted Job"}
-                          </td>
-                          <td className="px-6 py-4 capitalize">
-                            <Badge variant={app.stage?.key === "hired" ? "success" : app.stage?.key === "rejected" ? "error" : "warning"}>
-                              {app.stage?.key}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4">
-                            {app.aiScreening?.status === "completed" ? (
-                              <AIScoreBadge score={app.aiScreening?.overallScore} size="sm" />
-                            ) : (
-                              <span className="text-xs text-slate-400 font-medium capitalize">
-                                {app.aiScreening?.status || "queued"}
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-slate-400">
-                            {new Date(app.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <RecentJobsCard recentJobs={recentJobs} companyId={companyId} />
+          <RecentApplicationsCard recentApplications={recentApplications} />
         </div>
 
-        {/* Right Sidebar - Team Members */}
+        {/* Right Sidebar - Actions & Members */}
         <div className="space-y-8">
-          <Card className="border border-slate-100 shadow-sm rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-4">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Team Members</h2>
-                <p className="text-xs text-slate-400">Manage recruiter permissions</p>
-              </div>
-              {isOwner && (
-                <Button size="sm" onClick={() => setIsInviteOpen(true)} className="px-3.5 py-2">
-                  <Plus className="w-3.5 h-3.5 mr-0.5" /> Invite HR
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {team?.map((member) => (
-                <div key={member._id} className="flex items-center justify-between p-3.5 rounded-lg border border-slate-50 bg-slate-50/30 hover:bg-slate-50 transition-colors">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-(--color-brand-blue) to-(--color-brand-teal) text-white flex items-center justify-center font-bold text-sm shrink-0">
-                      {member.user?.fullName?.[0] || "U"}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-slate-800 text-sm truncate">{member.user?.fullName}</p>
-                      <p className="text-xs text-slate-400 truncate">{member.user?.email}</p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <Badge size="sm" variant={member.role === "owner" ? "purple" : "default"}>
-                          {member.role}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  {isOwner && member.role === "hr" && (
-                    <button
-                      onClick={() => handleRemoveHR(member.user?._id, member.user?.fullName)}
-                      disabled={removeHRMutation.isPending}
-                      className="p-2 text-slate-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50"
-                      title="Remove HR"
-                    >
-                      <UserX className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          <QuickActionsCard
+            onPostJob={() => navigate("/jobs/create")}
+            onManageJobs={() => navigate(`/employer/company/${companyId}/jobs`)}
+            onViewProfile={() => navigate("/employer/profile")}
+          />
+          <TeamMembersCard
+            team={team}
+            isOwner={isOwner}
+            onInviteOpen={() => setIsInviteOpen(true)}
+            onRemoveHR={handleRemoveHRTrigger}
+            pendingRemove={removeHRMutation.isPending}
+          />
         </div>
       </div>
 
@@ -495,6 +607,43 @@ export default function EmployerDashboard() {
                 </Button>
               </ModalFooter>
             </form>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Remove HR Confirmation Modal */}
+      {isRemoveHrOpen && (
+        <Modal open={isRemoveHrOpen} onOpenChange={setIsRemoveHrOpen}>
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitle className="text-slate-900 font-bold">Remove HR Recruiter</ModalTitle>
+              <ModalDescription className="text-slate-500 mt-2">
+                Are you sure you want to remove <span className="font-semibold text-slate-800">{hrToRemoveName}</span> from the company?
+                <br /><br />
+                This user will lose all recruiter dashboard privileges for {company?.name}.
+              </ModalDescription>
+            </ModalHeader>
+            <ModalFooter className="mt-6 flex flex-row justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsRemoveHrOpen(false);
+                  setHrToRemoveId(null);
+                  setHrToRemoveName("");
+                }}
+                disabled={removeHRMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleConfirmRemoveHR}
+                disabled={removeHRMutation.isPending}
+              >
+                {removeHRMutation.isPending ? "Removing..." : "Remove"}
+              </Button>
+            </ModalFooter>
           </ModalContent>
         </Modal>
       )}
