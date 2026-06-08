@@ -1,8 +1,9 @@
 import React from 'react';
 import { Briefcase } from 'lucide-react';
-import { AIScoreBadge } from '../../../../components/ui/AIScoreBadge';
+import { useNavigate } from 'react-router-dom';
 
 export default function ApplicationKanbanCard({ app }) {
+  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all space-y-3.5 w-full">
       <div className="flex gap-3 items-center">
@@ -18,9 +19,15 @@ export default function ApplicationKanbanCard({ app }) {
       </div>
 
       <div className="flex justify-between items-center pt-1 gap-2">
-        <AIScoreBadge score={app.aiScore} showIcon={true} />
-        <button className="border border-[var(--color-brand-blue)] text-[var(--color-brand-blue)] font-bold text-xs md:text-sm px-4 py-1.5 rounded-lg hover:bg-blue-50/50 transition-colors cursor-pointer shrink-0">
-          View
+        <button
+          onClick={() => navigate(`/candidate/jobs/${app.jobId}`)}
+          className="border border-gray-200 text-gray-700 font-bold text-xs md:text-sm px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer shrink-0">
+          View Job
+        </button>
+        <button
+          onClick={() => navigate(`/candidate/application/${app.id}`)}
+          className="border border-[var(--color-brand-blue)] text-[var(--color-brand-blue)] font-bold text-xs md:text-sm px-3 py-1.5 rounded-lg hover:bg-blue-50/50 transition-colors cursor-pointer shrink-0">
+          View Application
         </button>
       </div>
     </div>

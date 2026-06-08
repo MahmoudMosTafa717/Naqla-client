@@ -16,7 +16,7 @@ import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { AIScoreBadge } from "../components/ui/AIScoreBadge";
 import { getSavedJobs, unsaveJob } from "../services/profileApi";
-import { getMyApplications } from "../services/applicationApi";
+import { getMyApplications } from "../services/applicationAPI";
 
 function formatSalary(job) {
   if (job.salaryRange) {

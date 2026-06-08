@@ -50,7 +50,7 @@ export const RejectConfirmationModal = ({ applicationId, onClose }) => {
 
         <div className="py-4 space-y-3">
           <Textarea
-            label="Internal Rejection Notes / Feedback"
+            label="Internal Rejection Notes / Feedback (Optional)"
             placeholder="Describe the reason for rejection (e.g., Lacks core experience, low technical interview rating)..."
             value={hrNotes}
             onChange={(e) => setHrNotes(e.target.value)}
@@ -59,7 +59,7 @@ export const RejectConfirmationModal = ({ applicationId, onClose }) => {
             disabled={loading}
           />
           <div className="flex justify-between items-center text-xs text-slate-400">
-            <span>Minimum 10 characters recommended for screening email fallback.</span>
+            <span>Minimum 10 characters recommended if you want to provide constructive feedback.</span>
             <span>{hrNotes.length}/500</span>
           </div>
         </div>

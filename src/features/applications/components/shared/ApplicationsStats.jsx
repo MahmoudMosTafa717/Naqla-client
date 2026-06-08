@@ -1,11 +1,19 @@
 import React from 'react';
 
-export default function ApplicationsStats() {
+export default function ApplicationsStats({ apps = [] }) {
+  const total = apps.length;
+  const inProgress = apps.filter(app => app.kanbanBucket === 'inProgress').length;
+  const offers = apps.filter(app => app.kanbanBucket === 'offers').length;
+  
+  // Calculate Response Rate: percentage of applications progressed beyond initial stage
+  const responded = apps.filter(app => app.currentStageIndex > 0 || app.status === "Rejected").length;
+  const responseRate = total > 0 ? `${Math.round((responded / total) * 100)}%` : "0%";
+
   const stats = [
-    { label: "Total Applications", value: 5, color: "text-slate-900" },
-    { label: "In Progress", value: 3, color: "text-teal-600" },
-    { label: "Offers", value: 1, color: "text-emerald-600" },
-    { label: "Response Rate", value: "60%", color: "text-blue-600" }
+    { label: "Total Applications", value: total, color: "text-slate-900" },
+    { label: "In Progress", value: inProgress, color: "text-teal-600" },
+    { label: "Offers", value: offers, color: "text-emerald-600" },
+    { label: "Response Rate", value: responseRate, color: "text-blue-600" }
   ];
 
   return (

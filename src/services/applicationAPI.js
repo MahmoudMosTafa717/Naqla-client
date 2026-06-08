@@ -100,6 +100,22 @@ export async function addApplicationNote(applicationId, payload) {
 }
 
 /**
+ * Update a note / review rating on an application.
+ */
+export async function updateApplicationNote(applicationId, noteId, payload) {
+  const { data } = await apiClient.put(`/v1/applications/${applicationId}/notes/${noteId}`, payload);
+  return data;
+}
+
+/**
+ * Delete a note from an application.
+ */
+export async function deleteApplicationNote(applicationId, noteId) {
+  const { data } = await apiClient.delete(`/v1/applications/${applicationId}/notes/${noteId}`);
+  return data;
+}
+
+/**
  * Backward-compatible service object grouping all functions.
  */
 export const applicationService = {
@@ -109,11 +125,18 @@ export const applicationService = {
   },
   applyToJob,
   getCandidateApplications,
+  getMyApplications: getCandidateApplications,
   getApplicationDetails,
   updateApplicationStage,
   getApplicationsByJob,
   getJobKanban,
   retryScreening,
   addApplicationNote,
+  updateApplicationNote,
+  deleteApplicationNote,
   quickApply,
+  quickApplyToJob: quickApply,
 };
+
+export { getCandidateApplications as getMyApplications };
+export { quickApply as quickApplyToJob };

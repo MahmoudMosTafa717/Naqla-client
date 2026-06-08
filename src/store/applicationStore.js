@@ -212,6 +212,78 @@ export const updateApplicationStore = create((set) => ({
       throw error;
     }
   },
+
+  updateApplicationNote: async (applicationId, noteId, notePayload) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await applicationService.updateApplicationNote(applicationId, noteId, notePayload);
+      const updatedApplication = response.data;
+
+      set((state) => {
+        const currentApp = state.currentApplication && state.currentApplication._id === applicationId
+          ? { ...state.currentApplication, ...updatedApplication }
+          : state.currentApplication;
+
+        const updatedApps = state.applications.map((app) =>
+          app._id === applicationId ? { ...app, ...updatedApplication } : app
+        );
+
+        let updatedKanban = { ...state.kanbanData };
+        Object.keys(updatedKanban).forEach((stageKey) => {
+          updatedKanban[stageKey] = updatedKanban[stageKey].map((app) =>
+            app._id === applicationId ? { ...app, ...updatedApplication } : app
+          );
+        });
+
+        return {
+          currentApplication: currentApp,
+          applications: updatedApps,
+          kanbanData: updatedKanban,
+          loading: false,
+        };
+      });
+      return response;
+    } catch (error) {
+      set({ error: error.message || "Failed to update note", loading: false });
+      throw error;
+    }
+  },
+
+  deleteApplicationNote: async (applicationId, noteId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await applicationService.deleteApplicationNote(applicationId, noteId);
+      const updatedApplication = response.data;
+
+      set((state) => {
+        const currentApp = state.currentApplication && state.currentApplication._id === applicationId
+          ? { ...state.currentApplication, ...updatedApplication }
+          : state.currentApplication;
+
+        const updatedApps = state.applications.map((app) =>
+          app._id === applicationId ? { ...app, ...updatedApplication } : app
+        );
+
+        let updatedKanban = { ...state.kanbanData };
+        Object.keys(updatedKanban).forEach((stageKey) => {
+          updatedKanban[stageKey] = updatedKanban[stageKey].map((app) =>
+            app._id === applicationId ? { ...app, ...updatedApplication } : app
+          );
+        });
+
+        return {
+          currentApplication: currentApp,
+          applications: updatedApps,
+          kanbanData: updatedKanban,
+          loading: false,
+        };
+      });
+      return response;
+    } catch (error) {
+      set({ error: error.message || "Failed to delete note", loading: false });
+      throw error;
+    }
+  },
 }));
 
 export const useApplicationStore = updateApplicationStore;

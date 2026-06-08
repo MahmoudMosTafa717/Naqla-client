@@ -1,9 +1,10 @@
 import React from "react";
-import { Calendar, MessageSquare, Briefcase, CheckCircle2, MapPin, Check, X } from "lucide-react";
-import { AIScoreBadge } from "../../../../components/ui/AIScoreBadge";
+import { Calendar, MessageSquare, Briefcase, CheckCircle2, MapPin, Check, X, ArrowRight } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
+import { useNavigate } from "react-router-dom";
 
 export default function ApplicationTimelineCard({ app }) {
+  const navigate = useNavigate();
   const targetStages = ["Applied", "Reviewed", "Interview", "Offer"];
 
   const renderAlertBanner = () => {
@@ -58,9 +59,6 @@ export default function ApplicationTimelineCard({ app }) {
               <h3 className="text-xl font-bold text-[var(--color-brand-text)]">
                 {app.role}
               </h3>
-              <div className="text-sm font-medium">
-                <AIScoreBadge score={app.aiScore} showIcon={true} showLabel={false} />
-              </div>
             </div>
             <div className="shrink-0">
               <span
@@ -103,10 +101,12 @@ export default function ApplicationTimelineCard({ app }) {
           const isRejectedStage = app.status === "Rejected" && stage === "Offer";
 
 
-          const isLineActive = idx <= app.currentStageIndex;
-          const isLineRejected = app.status === "Rejected" && (idx + 1 === targetStages.length - 1);
+          const isLineActive = idx < app.currentStageIndex;
+          const isLineRejected = app.status === "Rejected" && idx >= app.currentStageIndex;
           const lineColorClass = isLineActive
-            ? (isLineRejected ? "bg-red-500" : "bg-emerald-500")
+            ? "bg-emerald-500"
+            : isLineRejected
+            ? "bg-red-500"
             : "bg-gray-100";
 
           return (
@@ -114,14 +114,14 @@ export default function ApplicationTimelineCard({ app }) {
               <div className="relative flex flex-col items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${
-                    isRejectedStage && isPassed
+                    isRejectedStage
                       ? "bg-red-500 border-red-500 text-white"
                       : isPassed
                       ? "bg-emerald-500 border-emerald-500 text-white"
                       : "bg-white border-gray-200 text-gray-300"
                   }`}
                 >
-                  {isPassed ? (
+                  {isPassed || isRejectedStage ? (
                     isRejectedStage ? (
                       <X className="w-4.5 h-4.5 text-white" />
                     ) : (
@@ -137,7 +137,7 @@ export default function ApplicationTimelineCard({ app }) {
                     {isRejectedStage ? "Rejected" : stage}
                   </span>
                   <span className="text-[10px] md:text-xs text-gray-400 font-semibold mt-0.5">
-                    {isPassed ? app.stageDates[stage.toLowerCase()] : ""}
+                    {isPassed || isRejectedStage ? app.stageDates[stage.toLowerCase()] : ""}
                   </span>
                 </div>
               </div>
@@ -153,8 +153,21 @@ export default function ApplicationTimelineCard({ app }) {
 
       {/* Action Buttons Section */}
       <div className="flex items-center gap-4 border-t border-gray-100 pt-4 mt-2">
-        <Button variant="outline" size="sm" className="hover:bg-[var(--color-brand-blue)] hover:text-white px-4 py-2 text-sm font-semibold">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate(`/candidate/jobs/${app.jobId}`)}
+          className="hover:bg-[var(--color-brand-blue)] hover:text-white px-4 py-2 text-sm font-semibold"
+        >
           View Job
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate(`/candidate/application/${app.id}`)}
+          className="hover:bg-[var(--color-brand-blue)] hover:text-white px-4 py-2 text-sm font-semibold"
+        >
+          View Application
         </Button>
         {app.status === "Interview Scheduled"  && (
           <Button variant="primary" size="sm" className="border border-transparent hover:text-[var(--color-brand-blue)] hover:bg-white hover:border-[var(--color-brand-blue)]  px-4 py-2 text-sm font-semibold">

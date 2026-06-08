@@ -12,11 +12,14 @@ import AIRecommendation from "../features/applications/components/details/AIReco
 import CandidateDetailsSkeleton from "../features/applications/components/details/CandidateDetailsSkeleton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApplicationStore } from "../store/applicationStore";
+import { useAuthStore } from "../store/authStore";
 
 export default function CandidateDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentApplication, fetchApplicationDetails, loading } = useApplicationStore();
+  const user = useAuthStore((s) => s.user);
+  const isHR = user?.role === "employer";
 
   useEffect(() => {
     if (id) {
@@ -78,21 +81,21 @@ export default function CandidateDetails() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-sm font-semibold text-blue-900 hover:text-blue-950 mb-6 transition-colors cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Pipeline
+          <ArrowLeft className="w-4 h-4" /> {isHR ? "Back to Pipeline" : "Back to Applications"}
         </button>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 space-y-6">
-            <CandidateProfileHeader candidate={candidate} />
-            <AIScreeningSummary summary={candidate.screeningSummary} strengths={candidate.strengths} />
+            <CandidateProfileHeader candidate={candidate} hideActions={!isHR} />
+            {isHR && <AIScreeningSummary summary={candidate.screeningSummary} strengths={candidate.strengths} />}
             <WorkExperienceTimeline experience={candidate.experience} />
             <EducationSection education={candidate.education} />
-            <InternalNotesSection />
+            {isHR && <InternalNotesSection applicationId={candidate.id} />}
           </div>
           <div className="space-y-6">
-            <AIMatchScoreCircle score={candidate.overallScore} />
+            {isHR && <AIMatchScoreCircle score={candidate.overallScore} />}
             <ApplicationDetails meta={candidate.meta} />
             <ResumeDownloadCard resumeName={candidate.meta.resumeName} uploadedTime={candidate.meta.uploadedTime} />
-            <AIRecommendation />
+            {isHR && <AIRecommendation />}
           </div>
         </div>
       </div>

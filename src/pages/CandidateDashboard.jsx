@@ -16,7 +16,7 @@ import { Badge } from "../components/ui/Badge";
 import { AIScoreBadge, AIScoreCircular } from "../components/ui/AIScoreBadge";
 import { useAuthStore } from "../store/authStore";
 import { getRecommendations } from "../services/jobsApi";
-import { getMyApplications } from "../services/applicationApi";
+import { getMyApplications } from "../services/applicationAPI";
 import { getDashboardStats } from "../services/profileApi";
 import { getCandidateProfile } from "../services/profileApi";
 

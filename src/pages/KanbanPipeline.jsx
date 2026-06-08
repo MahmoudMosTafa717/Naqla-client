@@ -5,6 +5,7 @@ import KanbanColumn from '../features/piplines/components/KanbanColumn';
 import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useApplicationStore } from '../store/applicationStore';
 import { RejectConfirmationModal } from '../features/applications/components/kanban/RejectConfirmationModal';
+import { getJobById } from '../services/jobsApi';
 
 const mapApplicationToCandidateCard = (app) => ({
   id: app._id,
@@ -16,6 +17,7 @@ const mapApplicationToCandidateCard = (app) => ({
   email: app.candidateId?.email || "",
   phone: app.candidateId?.profile?.basicInfo?.phone || "",
   appliedAt: app.createdAt,
+  hiredAt: app.stage?.key === 'hired' ? app.stage.changedAt || app.updatedAt : null,
   score: app.aiScreening?.overallScore || 0,
   skills: app.aiScreening?.matchedSkills || app.candidateId?.profile?.skills || [],
   location: app.candidateId?.profile?.basicInfo?.location 
@@ -30,6 +32,7 @@ function KanbanPipeline() {
   const { jobId } = useParams();
   const { fetchJobKanban, kanbanData, updateApplicationStage, loading } = useApplicationStore();
   const [rejectingAppId, setRejectingAppId] = useState(null);
+  const [job, setJob] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -40,6 +43,13 @@ function KanbanPipeline() {
   useEffect(() => {
     if (jobId) {
       fetchJobKanban(jobId);
+      getJobById(jobId)
+        .then((res) => {
+          setJob(res.data);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch job details:", err);
+        });
     }
   }, [jobId, fetchJobKanban]);
 
@@ -51,6 +61,26 @@ function KanbanPipeline() {
     hired: (kanbanData?.hired || []).map(mapApplicationToCandidateCard),
     rejected: (kanbanData?.rejected || []).map(mapApplicationToCandidateCard),
   };
+
+  const totalCandidates = Object.values(columns).reduce((acc, col) => acc + col.length, 0);
+  const allCandidates = Object.values(columns).flat();
+  const avgMatchScore = allCandidates.length > 0 
+    ? Math.round(allCandidates.reduce((acc, c) => acc + (c.score || 0), 0) / allCandidates.length)
+    : 0;
+
+    // incase in al hr msh 7atet totaldays
+  const hiredCandidates = columns.hired || [];
+  const totalDays = hiredCandidates.reduce((sum, c) => {
+    const start = new Date(c.appliedAt);
+    const end = c.hiredAt ? new Date(c.hiredAt) : new Date();
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return sum + diffDays;
+  }, 0);
+
+  const avgTimeToHire = hiredCandidates.length > 0 
+    ? `${Math.round(totalDays / hiredCandidates.length)}d`
+    : "14d";
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -125,7 +155,12 @@ function KanbanPipeline() {
 
   return (
     <div className="p-6 bg-slate-50/50 min-h-screen text-gray-800 font-sans flex flex-col gap-6">
-      <PipelineHeader />
+      <PipelineHeader 
+        jobTitle={job?.title || "Loading Job..."} 
+        totalCandidates={totalCandidates} 
+        avgMatchScore={avgMatchScore} 
+        avgTimeToHire={avgTimeToHire}
+      />
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
         <div className="flex gap-5 overflow-x-auto pb-6 select-none flex-1 items-start">
           <KanbanColumn id="applied" title="Applied" count={columns.applied.length} candidates={columns.applied} colorClass="border-t-blue-500" />

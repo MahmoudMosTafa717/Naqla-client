@@ -1,7 +1,7 @@
 import React from 'react';
 import { Briefcase, SlidersHorizontal, Download } from 'lucide-react';
 
-function PipelineHeader() {
+function PipelineHeader({ jobTitle = "Loading Job...", totalCandidates = 0, avgMatchScore = 0, avgTimeToHire = "14d" }) {
   return (
     <div className="space-y-4">
       {/* Top Title & Actions Row */}
@@ -27,19 +27,19 @@ function PipelineHeader() {
             <Briefcase className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-bold text-gray-900 text-base">Senior Frontend Developer</h2>
-            <p className="text-xs text-gray-400 font-medium">8 total candidates in pipeline</p>
+            <h2 className="font-bold text-gray-900 text-base">{jobTitle}</h2>
+            <p className="text-xs text-gray-400 font-medium">{totalCandidates} total candidates in pipeline</p>
           </div>
         </div>
 
         <div className="flex gap-6 sm:gap-8 items-center sm:text-right pr-0 sm:pr-4 w-full sm:w-auto justify-between sm:justify-end border-t border-gray-50 sm:border-t-0 pt-3 sm:pt-0">
           <div>
-            <span className="text-2xl font-black text-gray-900">84%</span>
+            <span className="text-2xl font-black text-gray-900">{avgMatchScore}%</span>
             <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Avg AI Match</p>
           </div>
           <div className="hidden sm:block border-l border-gray-100 h-8"></div>
           <div>
-            <span className="text-2xl font-black text-emerald-600">21d</span>
+            <span className="text-2xl font-black text-emerald-600">{avgTimeToHire}</span>
             <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Avg Time to Hire</p>
           </div>
         </div>
