@@ -137,7 +137,7 @@ export default function AdminDashboard() {
               value={stats?.users?.banned}
               icon={UserX}
               color="bg-red-500"
-              onClick={() => navigate("/admin/users")}
+              onClick={() => navigate("/admin/users?isBanned=true")}
             />
             <StatCard
               title="Total Jobs"
