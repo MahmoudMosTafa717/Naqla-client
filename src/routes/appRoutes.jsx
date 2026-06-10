@@ -31,6 +31,11 @@ const SavedJobs = lazy(() => import("../pages/SavedJobs"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const HrAssistantPage = lazy(() => import("../pages/HrAssistantPage"));
 
+const AdminDashboard = lazy(() => import("../pages/AdminDashboard"));
+const AdminUsers = lazy(() => import("../pages/AdminUsers"));
+const AdminCompanies = lazy(() => import("../pages/AdminCompanies"));
+const AnalyticsDashboard = lazy(() => import("../pages/AnalyticsDashboard"));
+
 export const appRoutes = [
   {
     element: <DashboardLayout />,
@@ -174,6 +179,26 @@ export const appRoutes = [
             path: "/employer/company/:companyId/ai-assistant/:jobId",
             element: <HrAssistantPage />,
             handle: { allowedRoles: ["employer"] },
+          },
+          {
+            path: "/admin/dashboard",
+            element: <AdminDashboard />,
+            handle: { allowedRoles: ["admin"] },
+          },
+          {
+            path: "/admin/users",
+            element: <AdminUsers />,
+            handle: { allowedRoles: ["admin"] },
+          },
+          {
+            path: "/admin/companies",
+            element: <AdminCompanies />,
+            handle: { allowedRoles: ["admin"] },
+          },
+          {
+            path: "/admin/analytics",
+            element: <AnalyticsDashboard />,
+            handle: { allowedRoles: ["admin"] },
           },
         ],
       },
