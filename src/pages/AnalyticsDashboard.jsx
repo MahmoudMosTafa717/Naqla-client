@@ -106,8 +106,8 @@ export default function AnalyticsDashboard() {
               onClick={() => setDays(d)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 days === d
-                  ? "bg-[var(--color-brand-blue)] text-white"
-                  : "bg-white border border-slate-200 text-slate-600 hover:border-[var(--color-brand-blue)]"
+                  ? "bg-(--color-brand-blue) text-white"
+                  : "bg-white border border-slate-200 text-slate-600 hover:border-(--color-brand-blue)"
               }`}
             >
               {d}d

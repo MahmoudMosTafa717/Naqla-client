@@ -14,14 +14,6 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Skeleton } from "../components/ui/Skeleton";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "../components/ui/Table";
 
 const ROLE_OPTIONS = ["all", "candidate", "employer", "admin"];
 
@@ -57,7 +49,6 @@ export default function AdminUsers() {
   useEffect(() => {
     const roleParam = searchParams.get("role");
     const isBannedParam = searchParams.get("isBanned");
-
     if (roleParam && ROLE_OPTIONS.includes(roleParam)) {
       setRole(roleParam);
     }
@@ -124,8 +115,8 @@ export default function AdminUsers() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 max-w-sm">
+      <div className="flex flex-col sm:flex-row gap-3 w-full">
+        <div className="w-72 shrink-0">
           <Input
             placeholder="Search by name or email..."
             icon={<Search className="w-4 h-4" />}
@@ -172,85 +163,109 @@ export default function AdminUsers() {
       </div>
 
       {/* Table */}
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 8 }).map((_, i) => (
-                <TableRow key={i}>
-                  {Array.from({ length: 6 }).map((_, j) => (
-                    <TableCell key={j}>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : users.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="text-center text-slate-400 py-10"
-                >
-                  No users found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user) => (
-                <TableRow key={user._id}>
-                  <TableCell className="font-medium text-slate-800">
-                    {user.fullName || "—"}
-                  </TableCell>
-                  <TableCell className="text-slate-500">{user.email}</TableCell>
-                  <TableCell>
-                    <Badge variant={getRoleVariant(user.role)}>
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(user)}>
-                      {getStatusLabel(user)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-slate-500 text-sm">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {user.role !== "admin" &&
-                      (user.isBanned ? (
-                        <button
-                          onClick={() =>
-                            setBanModal({ userId: user._id, action: "unban" })
-                          }
-                          className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-                        >
-                          <ShieldCheck className="w-4 h-4" /> Unban
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() =>
-                            setBanModal({ userId: user._id, action: "ban" })
-                          }
-                          className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600 font-medium"
-                        >
-                          <ShieldOff className="w-4 h-4" /> Ban
-                        </button>
-                      ))}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      <Card className="w-full overflow-hidden">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-sm table-fixed">
+            <colgroup>
+              <col style={{ width: "18%" }} />
+              <col style={{ width: "25%" }} />
+              <col style={{ width: "12%" }} />
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "15%" }} />
+            </colgroup>
+            <thead>
+              <tr className="border-b">
+                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
+                  Name
+                </th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
+                  Email
+                </th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
+                  Role
+                </th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
+                  Status
+                </th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
+                  Joined
+                </th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i} className="border-b">
+                    {Array.from({ length: 6 }).map((_, j) => (
+                      <td key={j} className="p-4">
+                        <Skeleton className="h-4 w-full" />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center text-slate-400 py-10">
+                    No users found.
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
+                  <tr
+                    key={user._id}
+                    className="border-b hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="p-4 font-medium text-slate-800 truncate">
+                      {user.fullName || "—"}
+                    </td>
+                    <td className="p-4 text-slate-500 truncate">
+                      {user.email}
+                    </td>
+                    <td className="p-4">
+                      <Badge variant={getRoleVariant(user.role)}>
+                        {user.role}
+                      </Badge>
+                    </td>
+                    <td className="p-4">
+                      <Badge variant={getStatusVariant(user)}>
+                        {getStatusLabel(user)}
+                      </Badge>
+                    </td>
+                    <td className="p-4 text-slate-500 text-sm">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-4">
+                      {user.role !== "admin" &&
+                        (user.isBanned ? (
+                          <button
+                            onClick={() =>
+                              setBanModal({ userId: user._id, action: "unban" })
+                            }
+                            className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                          >
+                            <ShieldCheck className="w-4 h-4" /> Unban
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              setBanModal({ userId: user._id, action: "ban" })
+                            }
+                            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600 font-medium"
+                          >
+                            <ShieldOff className="w-4 h-4" /> Ban
+                          </button>
+                        ))}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </Card>
 
       {/* Pagination */}
