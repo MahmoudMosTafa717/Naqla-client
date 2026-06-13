@@ -4,7 +4,7 @@ export const PROFILE_STEPS = [
   { id: 1, label: "Basic Info" },
   { id: 2, label: "Skills" },
   { id: 3, label: "Experience" },
-  { id: 4, label: "Upload Resume" },
+  { id: 4, label: "Resume" },
 ];
 
 export const stage1Schema = z.object({
