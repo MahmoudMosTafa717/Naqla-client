@@ -36,42 +36,48 @@ export function AIScoreCircular({ score, size = 120, strokeWidth = 8 }) {
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (score / 100) * circumference;
 
-  const getColor = (score) => {
-    if (score >= 80) return "#10b981";
-    if (score >= 60) return "#14B8A6";
-    if (score >= 40) return "#f59e0b";
-    return "#64748b";
-  };
-
   return (
-    <div className="relative inline-flex items-center justify-center">
-      <svg width={size} height={size} className="transform -rotate-90">
+    <div className="relative inline-flex items-center justify-center group cursor-pointer">
+      <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      <svg width={size} height={size} className="transform -rotate-90 drop-shadow-sm">
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#e2e8f0"
-          strokeWidth={strokeWidth}
+          stroke="currentColor"
+          strokeWidth={strokeWidth - 2}
           fill="none"
+          className="text-slate-100"
         />
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={getColor(score)}
+          stroke="url(#blue-gradient-circular)"
           strokeWidth={strokeWidth}
           fill="none"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          className="transition-all duration-1000 ease-out"
+          className="transition-all duration-1000 ease-out group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.5)]"
         />
+        <defs>
+          <linearGradient id="blue-gradient-circular" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#2563EB" />
+            <stop offset="100%" stopColor="#4F46E5" />
+          </linearGradient>
+        </defs>
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold" style={{ color: getColor(score) }}>
-          {score}%
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        <div className="flex items-baseline justify-center mt-1">
+          <span className={`${score === 100 ? 'text-2xl' : 'text-3xl'} font-black text-slate-900 tracking-tight leading-none`}>
+            {score}
+          </span>
+          <span className="text-sm font-bold text-slate-400 ml-0.5">%</span>
+        </div>
+        <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest mt-1">
+          Completion
         </span>
-        <span className="text-xs text-gray-500">Completion</span>
       </div>
     </div>
   );

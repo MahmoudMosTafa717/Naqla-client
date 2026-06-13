@@ -6,17 +6,17 @@ export function Button({
   ...props
 }) {
   const baseStyles =
-    "rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed";
+    "rounded-[24px] font-bold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow";
 
   const variants = {
     primary:
-      "bg-[var(--color-brand-blue)] text-white active:scale-95 hover:cursor-pointer",
+      "bg-[#1D4ED8] text-white active:scale-95 hover:bg-[#1e40af] hover:shadow-md",
     secondary:
-      "bg-[var(--color-brand-teal)] text-white active:scale-95 hover:cursor-pointer",
+      "bg-[#0F172A] text-white active:scale-95 hover:bg-[#1e293b] hover:shadow-md",
     outline:
-      "border-2 border-[var(--color-brand-blue)] text-[var(--color-brand-blue)] active:scale-95 hover:cursor-pointer",
-    ghost: "text-[var(--color-brand-blue)] active:scale-95 hover:cursor-pointer",
-    destructive: "bg-red-600 text-white active:scale-95",
+      "border-2 border-[#1D4ED8] text-[#1D4ED8] bg-transparent active:scale-95 hover:bg-[#EFF6FF]",
+    ghost: "text-[#1D4ED8] active:scale-95 hover:bg-[#EFF6FF] shadow-none hover:shadow-none",
+    destructive: "bg-red-600 text-white active:scale-95 hover:bg-red-700 hover:shadow-md",
   };
 
   const sizes = {
