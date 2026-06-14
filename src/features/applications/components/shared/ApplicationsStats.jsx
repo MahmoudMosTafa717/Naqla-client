@@ -4,7 +4,7 @@ export default function ApplicationsStats({ apps = [] }) {
   const total = apps.length;
   const inProgress = apps.filter(app => app.kanbanBucket === 'inProgress').length;
   const offers = apps.filter(app => app.kanbanBucket === 'offers').length;
-  
+
   // Calculate Response Rate: percentage of applications progressed beyond initial stage
   const responded = apps.filter(app => app.currentStageIndex > 0 || app.status === "Rejected").length;
   const responseRate = total > 0 ? `${Math.round((responded / total) * 100)}%` : "0%";
@@ -27,3 +27,15 @@ export default function ApplicationsStats({ apps = [] }) {
     </div>
   );
 }
+
+import PropTypes from "prop-types";
+
+ApplicationsStats.propTypes = {
+  apps: PropTypes.arrayOf(
+    PropTypes.shape({
+      kanbanBucket: PropTypes.string,
+      currentStageIndex: PropTypes.number,
+      status: PropTypes.string,
+    })
+  ),
+};

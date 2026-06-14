@@ -26,21 +26,19 @@ export default function ApplicationsHeader({
           <div className="bg-slate-100/80 p-1 rounded-[24px] flex border border-slate-200/40 shadow-2xs">
             <button
               onClick={() => setViewMode("timeline")}
-              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold rounded-[24px] transition-all duration-200 ease-in-out cursor-pointer ${
-                viewMode === "timeline"
+              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold rounded-[24px] transition-all duration-200 ease-in-out cursor-pointer ${viewMode === "timeline"
                   ? "bg-white shadow-xs text-(--color-secondary-main)"
                   : "text-slate-400 hover:text-slate-650"
-              }`}
+                }`}
             >
               <List className="w-4 h-4" /> Timeline View
             </button>
             <button
               onClick={() => setViewMode("kanban")}
-              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold rounded-[24px] transition-all duration-200 ease-in-out cursor-pointer ${
-                viewMode === "kanban"
+              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-bold rounded-[24px] transition-all duration-200 ease-in-out cursor-pointer ${viewMode === "kanban"
                   ? "bg-white shadow-xs text-(--color-secondary-main)"
                   : "text-slate-400 hover:text-slate-650"
-              }`}
+                }`}
             >
               <LayoutGrid className="w-4 h-4" /> Kanban View
             </button>
@@ -89,3 +87,16 @@ export default function ApplicationsHeader({
     </div>
   );
 }
+
+import PropTypes from "prop-types";
+
+ApplicationsHeader.propTypes = {
+  viewMode: PropTypes.oneOf(["timeline", "kanban"]).isRequired,
+  setViewMode: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  setSearchTerm: PropTypes.func.isRequired,
+  statusFilter: PropTypes.string.isRequired,
+  setStatusFilter: PropTypes.func.isRequired,
+  showFilters: PropTypes.bool.isRequired,
+  setShowFilters: PropTypes.func.isRequired,
+};

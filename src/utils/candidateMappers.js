@@ -202,3 +202,68 @@ export const mapApplicationToCandidateDetails = (app) => {
     },
   };
 };
+
+export const mapApplicationToDashboard = (app) => {
+  if (!app) return null;
+
+  const stageKey = app.stage?.key || "applied";
+  
+  let status;
+  let currentStageIndex;
+  let kanbanBucket;
+  let alertMessage = "";
+  if (stageKey === "rejected") {
+    status = "Rejected";
+    kanbanBucket = "rejected";
+    currentStageIndex = 1;
+    alertMessage = "Position filled";
+  } else if (stageKey === "offer" || stageKey === "hired") {
+    status = stageKey === "hired" ? "Hired" : "Offer Received";
+    kanbanBucket = "offers";
+    currentStageIndex = 3;
+    alertMessage = stageKey === "hired" ? "Congratulations on your new role!" : "Competitive package";
+  } else if (stageKey === "interview") {
+    status = "Interview Scheduled";
+    kanbanBucket = "inProgress";
+    currentStageIndex = 2;
+    alertMessage = "Check your email for details";
+  } else if (stageKey === "shortlisted") {
+    status = "In Review";
+    kanbanBucket = "inProgress";
+    currentStageIndex = 1;
+  } else {
+    status = "In Review";
+    kanbanBucket = "inProgress";
+    currentStageIndex = 0;
+  }
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const parsedDate = new Date(dateStr);
+    if (isNaN(parsedDate.getTime())) return "";
+    return parsedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  };
+
+  const appliedDateStr = formatDate(app.createdAt);
+  const changedDateStr = formatDate(app.stage?.changedAt || app.updatedAt);
+
+  return {
+    id: app._id,
+    jobId: app.jobId?._id || app.jobId,
+    role: app.jobId?.title || "Software Engineer",
+    company: app.companyId?.name || "Company",
+    location: app.jobId?.location || "Remote",
+    appliedDate: appliedDateStr,
+    aiScore: app.aiScreening?.overallScore || 0,
+    status,
+    alertMessage,
+    currentStageIndex,
+    stageDates: {
+      applied: appliedDateStr,
+      reviewed: currentStageIndex >= 1 ? changedDateStr : "",
+      interview: currentStageIndex >= 2 ? changedDateStr : "",
+      offer: status === "Rejected" || currentStageIndex >= 3 ? changedDateStr : "",
+    },
+    kanbanBucket,
+  };
+};
