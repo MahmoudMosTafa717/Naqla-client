@@ -26,3 +26,10 @@ export default function ApplicationKanbanColumn({ title, apps = [] }) {
     </div>
   );
 }
+
+import PropTypes from "prop-types";
+
+ApplicationKanbanColumn.propTypes = {
+  title: PropTypes.string.isRequired,
+  apps: PropTypes.arrayOf(PropTypes.object),
+};

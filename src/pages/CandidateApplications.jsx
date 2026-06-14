@@ -1,105 +1,29 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import ApplicationsHeader from "../features/applications/components/shared/ApplicationsHeader.jsx";
 import ApplicationsStats from "../features/applications/components/shared/ApplicationsStats.jsx";
 import ApplicationTimelineCard from "../features/applications/components/timeline/ApplicationTimelineCard.jsx";
-import ApplicationKanbanColumn from "../features/applications/components/kanban/ApplicationKanbanColumn.jsx";
+import ApplicationKanbanBoard from "../features/applications/components/kanban/ApplicationKanbanBoard.jsx";
 import ApplicationsSkeleton from "../features/applications/components/shared/ApplicationsSkeleton.jsx";
-import { useApplicationStore } from "../store/applicationStore.js";
 import { AlertCircle } from "lucide-react";
-
-const mapApplication = (app) => {
-  const stageKey = app.stage?.key || "applied";
-  
-  let status;
-  let currentStageIndex;
-  let kanbanBucket;
-  let alertMessage = "";
-
-  if (stageKey === "rejected") {
-    status = "Rejected";
-    kanbanBucket = "rejected";
-    currentStageIndex = 1;
-    alertMessage = "Position filled";
-  } else if (stageKey === "offer" || stageKey === "hired") {
-    status = stageKey === "hired" ? "Hired" : "Offer Received";
-    kanbanBucket = "offers";
-    currentStageIndex = 3;
-    alertMessage = stageKey === "hired" ? "Congratulations on your new role!" : "Competitive package";
-  } else if (stageKey === "interview") {
-    status = "Interview Scheduled";
-    kanbanBucket = "inProgress";
-    currentStageIndex = 2;
-    alertMessage = "Check your email for details";
-  } else if (stageKey === "shortlisted") {
-    status = "In Review";
-    kanbanBucket = "inProgress";
-    currentStageIndex = 1;
-  } else {
-    status = "In Review";
-    kanbanBucket = "inProgress";
-    currentStageIndex = 0;
-  }
-
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
-
-  const appliedDateStr = formatDate(app.createdAt);
-  const changedDateStr = formatDate(app.stage?.changedAt || app.updatedAt);
-
-  return {
-    id: app._id,
-    jobId: app.jobId?._id || app.jobId,
-    role: app.jobId?.title || "Software Engineer",
-    company: app.companyId?.name || "Company",
-    location: app.jobId?.location || "Remote",
-    appliedDate: appliedDateStr,
-    aiScore: app.aiScreening?.overallScore || 0,
-    status,
-    alertMessage,
-    currentStageIndex,
-    stageDates: {
-      applied: appliedDateStr,
-      reviewed: currentStageIndex >= 1 ? changedDateStr : "",
-      interview: currentStageIndex >= 2 ? changedDateStr : "",
-      offer: status === "Rejected" || currentStageIndex >= 3 ? changedDateStr : "",
-    },
-    kanbanBucket,
-  };
-};
+import { useCandidateApplications } from "../hooks/useCandidateApplications.js";
 
 export default function CandidateApplications() {
-  const [viewMode, setViewMode] = useState("timeline");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [showFilters, setShowFilters] = useState(false);
-
-  const { loading, error, applications, fetchCandidateApplications, clearError } = useApplicationStore();
-
-  useEffect(() => {
-    fetchCandidateApplications();
-  }, [fetchCandidateApplications]);
-
-  const mappedApplications = (applications || []).map(mapApplication);
-
-  const filteredApplications = mappedApplications.filter((app) => {
-    const matchesSearch =
-      app.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.company.toLowerCase().includes(searchTerm.toLowerCase());
-
-    if (viewMode === "kanban") {
-      return matchesSearch;
-    }
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "inProgress" && app.kanbanBucket === "inProgress") ||
-      (statusFilter === "offers" && app.kanbanBucket === "offers") ||
-      (statusFilter === "rejected" && app.kanbanBucket === "rejected");
-
-    return matchesSearch && matchesStatus;
-  });
+  const {
+    viewMode,
+    setViewMode,
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    showFilters,
+    setShowFilters,
+    loading,
+    error,
+    mappedApplications,
+    filteredApplications,
+    kanbanBuckets,
+    handleRetry,
+  } = useCandidateApplications();
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen text-(--color-secondary-main) font-sans py-8">
@@ -115,6 +39,7 @@ export default function CandidateApplications() {
           setShowFilters={setShowFilters}
         />
         <ApplicationsStats apps={mappedApplications}/>
+        
         {error ? (
           <div className="mt-8 bg-red-50/40 border border-red-200/50 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-micro animate-in fade-in slide-in-from-bottom-3 duration-300">
             <div className="w-12 h-12 rounded-full bg-red-100/60 text-red-600 flex items-center justify-center mx-auto mb-4 shadow-sm">
@@ -123,10 +48,7 @@ export default function CandidateApplications() {
             <h3 className="text-lg font-extrabold text-red-800 mb-1">Failed to Load Applications</h3>
             <p className="text-sm text-red-650/80 mb-6 font-medium">{error}</p>
             <button
-              onClick={() => {
-                clearError();
-                fetchCandidateApplications();
-              }}
+              onClick={handleRetry}
               className="bg-[#EF4444] hover:bg-red-600 text-white font-bold text-sm px-6 py-2.5 rounded-[24px] transition-all shadow-2xs hover:shadow-sm cursor-pointer"
             >
               Retry Connection
@@ -135,7 +57,7 @@ export default function CandidateApplications() {
         ) : loading ? (
           <ApplicationsSkeleton viewMode={viewMode} />
         ) : viewMode === 'timeline' ? (
-          <div className='mt-8 space-y-4 w-full'>
+          <div className="mt-8 space-y-4 w-full">
             {filteredApplications.length > 0 ? (
               filteredApplications.map(app => (
                 <ApplicationTimelineCard key={app.id} app={app}/>
@@ -147,20 +69,7 @@ export default function CandidateApplications() {
             )}
           </div>
         ) : (
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 w-full items-stretch">
-            <ApplicationKanbanColumn 
-              title="In Progress" 
-              apps={filteredApplications.filter(app => app.kanbanBucket === 'inProgress')} 
-            />
-            <ApplicationKanbanColumn 
-              title="Offers" 
-              apps={filteredApplications.filter(app => app.kanbanBucket === 'offers')} 
-            />
-            <ApplicationKanbanColumn 
-              title="Rejected" 
-              apps={filteredApplications.filter(app => app.kanbanBucket === 'rejected')} 
-            />
-          </div>
+          <ApplicationKanbanBoard kanbanBuckets={kanbanBuckets} />
         )}
       </div>
     </div>

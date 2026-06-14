@@ -113,20 +113,19 @@ export default function ApplicationTimelineCard({ app }) {
           const lineColorClass = isLineActive
             ? "bg-[var(--color-primary-main)]"
             : isLineRejected
-            ? "bg-red-500"
-            : "bg-slate-100";
+              ? "bg-red-500"
+              : "bg-slate-100";
 
           return (
             <React.Fragment key={stage}>
               <div className="relative flex flex-col items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${
-                    isRejectedStage
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${isRejectedStage
                       ? "bg-red-500 border-red-500 text-white"
                       : isPassed
-                      ? "bg-[var(--color-primary-main)] border-[var(--color-primary-main)] text-white"
-                      : "bg-white border-slate-200 text-slate-300"
-                  }`}
+                        ? "bg-[var(--color-primary-main)] border-[var(--color-primary-main)] text-white"
+                        : "bg-white border-slate-200 text-slate-300"
+                    }`}
                 >
                   {isPassed || isRejectedStage ? (
                     isRejectedStage ? (
@@ -177,9 +176,9 @@ export default function ApplicationTimelineCard({ app }) {
           View Application
         </Button>
         {app.status === "Interview Scheduled" && (
-          <Button 
-            variant="primary" 
-            size="sm" 
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => toast.info(app.alertMessage || "Check your email for details")}
             className="hover:bg-blue-700 px-4 py-2 rounded-[24px] text-xs md:text-sm font-bold transition-all shadow-2xs flex items-center gap-1.5"
           >
@@ -190,3 +189,26 @@ export default function ApplicationTimelineCard({ app }) {
     </div>
   );
 }
+
+import PropTypes from "prop-types";
+
+ApplicationTimelineCard.propTypes = {
+  app: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    jobId: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    company: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
+    appliedDate: PropTypes.string.isRequired,
+    aiScore: PropTypes.number.isRequired,
+    status: PropTypes.string.isRequired,
+    alertMessage: PropTypes.string,
+    currentStageIndex: PropTypes.number.isRequired,
+    stageDates: PropTypes.shape({
+      applied: PropTypes.string,
+      reviewed: PropTypes.string,
+      interview: PropTypes.string,
+      offer: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+};
