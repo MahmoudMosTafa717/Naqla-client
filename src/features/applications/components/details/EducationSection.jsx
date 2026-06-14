@@ -1,4 +1,5 @@
 import { GraduationCap } from "lucide-react";
+import PropTypes from 'prop-types';
 
 export default function EducationSection({ education }) {
   const { degree, university, meta } = education || {};
@@ -20,3 +21,11 @@ export default function EducationSection({ education }) {
     </div>
   );
 }
+
+EducationSection.propTypes = {
+  education: PropTypes.shape({
+    degree: PropTypes.string,
+    university: PropTypes.string,
+    meta: PropTypes.string,
+  }).isRequired,
+};

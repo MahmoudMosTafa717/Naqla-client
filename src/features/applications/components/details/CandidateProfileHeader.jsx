@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin, Briefcase, Star, CheckCircle2, Calendar, XCircle }
 import { Button } from '../../../../components/ui/Button.jsx';
 import { useApplicationStore } from '../../../../store/applicationStore.js';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 import { createInterview } from '../../../../services/interviewApi.js';
 import { InterviewModal } from '../../../../components/interviews/InterviewModal.jsx';
 
@@ -138,3 +139,22 @@ export default function CandidateProfileHeader({ candidate = {}, hideActions = f
     </div>
   );
 }
+
+CandidateProfileHeader.propTypes = {
+  candidate: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    initials: PropTypes.string,
+    role: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string,
+    skills: PropTypes.arrayOf(PropTypes.string),
+    location: PropTypes.string,
+    experienceYears: PropTypes.string,
+    isStarred: PropTypes.bool,
+    meta: PropTypes.shape({
+      status: PropTypes.string,
+    }),
+  }).isRequired,
+  hideActions: PropTypes.bool,
+};

@@ -1,4 +1,5 @@
 import { FileText, Download } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 export default function ResumeDownloadCard({ resumeName, uploadedTime, resumeUrl }) {
   const handleDownload = () => {
@@ -30,3 +31,9 @@ export default function ResumeDownloadCard({ resumeName, uploadedTime, resumeUrl
     </div>
   );
 }
+
+ResumeDownloadCard.propTypes = {
+  resumeName: PropTypes.string,
+  uploadedTime: PropTypes.string,
+  resumeUrl: PropTypes.string,
+};

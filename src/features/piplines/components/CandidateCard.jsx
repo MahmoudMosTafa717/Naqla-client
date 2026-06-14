@@ -5,6 +5,7 @@ import { AIScoreBadge } from '../../../components/ui/AIScoreBadge.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useApplicationStore } from '../../../store/applicationStore.js';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 function CandidateCard({candidateDate}) {
   const {name, role , id, email, phone, appliedAt, score, skills,  location, experience , isStarred, redFlags, initials} = candidateDate || {};
@@ -186,4 +187,24 @@ function CandidateCard({candidateDate}) {
     </div>
   )
 }
+
+CandidateCard.propTypes = {
+  candidateDate: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    initials: PropTypes.string,
+    role: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string,
+    appliedAt: PropTypes.string,
+    hiredAt: PropTypes.string,
+    score: PropTypes.number,
+    skills: PropTypes.arrayOf(PropTypes.string),
+    location: PropTypes.string,
+    experience: PropTypes.number,
+    redFlags: PropTypes.string,
+    isStarred: PropTypes.bool,
+  }).isRequired,
+};
+
 export default CandidateCard;

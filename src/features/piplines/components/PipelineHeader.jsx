@@ -1,4 +1,5 @@
 import { Briefcase, SlidersHorizontal, Download } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 function PipelineHeader({ jobTitle = "Loading Job...", totalCandidates = 0, avgMatchScore = 0, avgTimeToHire = "14d", sortBy = "score", onSortChange, onExport }) {
   return (
@@ -50,7 +51,7 @@ function PipelineHeader({ jobTitle = "Loading Job...", totalCandidates = 0, avgM
           </div>
           <div className="hidden sm:block border-l border-(--color-border) h-8"></div>
           <div>
-            <span className="text-2xl font-extrabold text-emerald-600">{avgTimeToHire}</span>
+            <span className="text-2xl font-extrabold text-slate-900">{avgTimeToHire}</span>
             <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mt-0.5">Avg Time to Hire</p>
           </div>
         </div>
@@ -58,5 +59,15 @@ function PipelineHeader({ jobTitle = "Loading Job...", totalCandidates = 0, avgM
     </div>
   );
 }
+
+PipelineHeader.propTypes = {
+  jobTitle: PropTypes.string,
+  totalCandidates: PropTypes.number,
+  avgMatchScore: PropTypes.number,
+  avgTimeToHire: PropTypes.string,
+  sortBy: PropTypes.string,
+  onSortChange: PropTypes.func.isRequired,
+  onExport: PropTypes.func.isRequired,
+};
 
 export default PipelineHeader;

@@ -1,5 +1,6 @@
 import CandidateCard from './CandidateCard';
 import { useDroppable } from '@dnd-kit/core';
+import PropTypes from 'prop-types';
 
 function KanbanColumn({title, id, count, candidates, colorClass}) {
   const { setNodeRef, isOver } = useDroppable({
@@ -34,5 +35,13 @@ function KanbanColumn({title, id, count, candidates, colorClass}) {
     </div>
   );
 }
+
+KanbanColumn.propTypes = {
+  title: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  count: PropTypes.number,
+  candidates: PropTypes.arrayOf(PropTypes.object).isRequired,
+  colorClass: PropTypes.string,
+};
 
 export default KanbanColumn;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Briefcase } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 export default function WorkExperienceTimeline({ experience = [] }) {
   return (
@@ -25,3 +26,14 @@ export default function WorkExperienceTimeline({ experience = [] }) {
     </div>
   );
 }
+
+WorkExperienceTimeline.propTypes = {
+  experience: PropTypes.arrayOf(
+    PropTypes.shape({
+      role: PropTypes.string,
+      company: PropTypes.string,
+      period: PropTypes.string,
+      desc: PropTypes.string,
+    })
+  ),
+};
