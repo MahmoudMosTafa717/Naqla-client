@@ -1,8 +1,22 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Bell, User, Settings, LogOut, Menu, Loader2, ChevronDown, Check,
-  Plus, Building, Bookmark, Briefcase, Calendar, Info, ClipboardList, X,
+  Bell,
+  User,
+  Settings,
+  LogOut,
+  Menu,
+  Loader2,
+  ChevronDown,
+  Check,
+  Plus,
+  Building,
+  Bookmark,
+  Briefcase,
+  Calendar,
+  Info,
+  ClipboardList,
+  X,
 } from "lucide-react";
 import { useSignOut } from "../../hooks/useSignOut";
 import { useEmployerStore } from "../../store/employerStore";
@@ -20,7 +34,9 @@ function BrandLogo({ onClick }) {
     >
       <div
         className="w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shrink-0 shadow-sm"
-        style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2563EB 100%)" }}
+        style={{
+          background: "linear-gradient(135deg, #1e3a8a 0%, #2563EB 100%)",
+        }}
       >
         <span className="text-white font-black text-base select-none">N</span>
       </div>
@@ -55,7 +71,9 @@ function CandidateAvatar({ userName }) {
       className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm"
       style={{ background: "linear-gradient(135deg, #1e3a8a, #2563EB)" }}
     >
-      <span className="text-white text-sm font-semibold">{userName?.[0] || "U"}</span>
+      <span className="text-white text-sm font-semibold">
+        {userName?.[0] || "U"}
+      </span>
     </div>
   );
 }
@@ -96,8 +114,13 @@ export function Navbar() {
   const [showNotifications, setShowNotifications] = React.useState(false);
   const [showUserMenu, setShowUserMenu] = React.useState(false);
 
-  const { memberships, activeCompanyId, activeCompany, fetchMemberships, setActiveCompanyId } =
-    useEmployerStore();
+  const {
+    memberships,
+    activeCompanyId,
+    activeCompany,
+    fetchMemberships,
+    setActiveCompanyId,
+  } = useEmployerStore();
   const [showWorkspaceMenu, setShowWorkspaceMenu] = React.useState(false);
 
   const userMenuRef = React.useRef(null);
@@ -109,11 +132,21 @@ export function Navbar() {
     function handleClickOutside(event) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target))
         setShowUserMenu(false);
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target))
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      )
         setShowNotifications(false);
-      if (workspaceMenuRef.current && !workspaceMenuRef.current.contains(event.target))
+      if (
+        workspaceMenuRef.current &&
+        !workspaceMenuRef.current.contains(event.target)
+      )
         setShowWorkspaceMenu(false);
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && !event.target.closest('.mobile-menu-btn'))
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target) &&
+        !event.target.closest(".mobile-menu-btn")
+      )
         setShowMobileMenu(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -122,7 +155,9 @@ export function Navbar() {
 
   React.useEffect(() => {
     if (userRole === "employer" && user?._id) {
-      fetchMemberships().catch((err) => console.error("Error loading memberships:", err));
+      fetchMemberships().catch((err) =>
+        console.error("Error loading memberships:", err),
+      );
     }
   }, [userRole, fetchMemberships, user?._id]);
 
@@ -142,12 +177,13 @@ export function Navbar() {
 
   const { notifications, unreadCount, markRead } = useNotificationStore();
 
-  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
+  const isActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(path + "/");
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: "smooth" });
       setShowMobileMenu(false);
     }
   };
@@ -161,7 +197,8 @@ export function Navbar() {
           backdropFilter: "blur(40px) saturate(200%)",
           WebkitBackdropFilter: "blur(40px) saturate(200%)",
           border: "1px solid rgba(255, 255, 255, 0.3)",
-          boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.08), 0 2px 8px 0 rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.4)",
+          boxShadow:
+            "0 8px 32px 0 rgba(0, 0, 0, 0.08), 0 2px 8px 0 rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.4)",
         }}
       >
         {/* Subtle noise overlay for premium feel */}
@@ -183,21 +220,35 @@ export function Navbar() {
                 }}
                 className="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all max-w-[12rem] focus-visible:ring-2 focus-visible:ring-slate-300 focus:outline-none"
                 style={{
-                  background: showWorkspaceMenu ? "#f1f5f9" : "rgba(248, 250, 252, 0.8)",
+                  background: showWorkspaceMenu
+                    ? "#f1f5f9"
+                    : "rgba(248, 250, 252, 0.8)",
                   border: "1px solid rgba(226, 232, 240, 0.8)",
                   color: "#334155",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = showWorkspaceMenu ? "#f1f5f9" : "rgba(248, 250, 252, 0.8)"; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#f1f5f9";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = showWorkspaceMenu
+                    ? "#f1f5f9"
+                    : "rgba(248, 250, 252, 0.8)";
+                }}
               >
                 <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-semibold text-slate-700 shrink-0 overflow-hidden shadow-sm border border-slate-100">
                   {activeCompany?.logo ? (
-                    <img src={activeCompany.logo} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={activeCompany.logo}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <Building className="w-3 h-3" />
                   )}
                 </div>
-                <span className="truncate">{activeCompany?.name || "Select Company"}</span>
+                <span className="truncate">
+                  {activeCompany?.name || "Select Company"}
+                </span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-0.5" />
               </button>
 
@@ -224,16 +275,27 @@ export function Navbar() {
                         style={{ color: "#334155" }}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-semibold text-slate-600 shrink-0 overflow-hidden shadow-sm" style={{ border: "1px solid #e2e8f0" }}>
+                          <div
+                            className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-semibold text-slate-600 shrink-0 overflow-hidden shadow-sm"
+                            style={{ border: "1px solid #e2e8f0" }}
+                          >
                             {m.company?.logo ? (
-                              <img src={m.company.logo} alt="" className="w-full h-full object-cover" />
+                              <img
+                                src={m.company.logo}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
                             ) : (
                               <Building className="w-4 h-4" />
                             )}
                           </div>
                           <div className="truncate text-left">
-                            <p className="font-semibold text-slate-800 truncate">{m.company?.name}</p>
-                            <p className="text-[11px] text-slate-400 capitalize mt-0.5">{m.role}</p>
+                            <p className="font-semibold text-slate-800 truncate">
+                              {m.company?.name}
+                            </p>
+                            <p className="text-[11px] text-slate-400 capitalize mt-0.5">
+                              {m.role}
+                            </p>
                           </div>
                         </div>
                         {m.company?._id === activeCompanyId && (
@@ -258,19 +320,54 @@ export function Navbar() {
         {/* Center: Nav links (Desktop) - Absolutely positioned for perfect centering */}
         <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 z-0">
           {/* Landing page anchor links */}
-          {location.pathname === '/' && (
+          {location.pathname === "/" && (
             <>
-              <NavLink active={false} onClick={() => scrollToSection('how-it-works')}>How it works</NavLink>
-              <NavLink active={false} onClick={() => scrollToSection('features')}>Features</NavLink>
-              <NavLink active={false} onClick={() => scrollToSection('testimonials')}>Testimonials</NavLink>
+              <NavLink
+                active={false}
+                onClick={() => scrollToSection("how-it-works")}
+              >
+                How it works
+              </NavLink>
+              <NavLink
+                active={false}
+                onClick={() => scrollToSection("features")}
+              >
+                Features
+              </NavLink>
+              <NavLink
+                active={false}
+                onClick={() => scrollToSection("testimonials")}
+              >
+                Testimonials
+              </NavLink>
             </>
           )}
           {userRole === "candidate" && (
             <>
-              <NavLink active={isActive("/candidate/dashboard")} onClick={() => navigate("/candidate/dashboard")}>Dashboard</NavLink>
-              <NavLink active={isActive("/candidate/jobs")} onClick={() => navigate("/candidate/jobs")}>Find Jobs</NavLink>
-              <NavLink active={isActive("/candidate/applications")} onClick={() => navigate("/candidate/applications")}>My Applications</NavLink>
-              <NavLink active={isActive("/candidate/profile")} onClick={() => navigate("/candidate/profile")}>Profile</NavLink>
+              <NavLink
+                active={isActive("/candidate/dashboard")}
+                onClick={() => navigate("/candidate/dashboard")}
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                active={isActive("/candidate/jobs")}
+                onClick={() => navigate("/candidate/jobs")}
+              >
+                Find Jobs
+              </NavLink>
+              <NavLink
+                active={isActive("/candidate/applications")}
+                onClick={() => navigate("/candidate/applications")}
+              >
+                My Applications
+              </NavLink>
+              <NavLink
+                active={isActive("/candidate/profile")}
+                onClick={() => navigate("/candidate/profile")}
+              >
+                Profile
+              </NavLink>
             </>
           )}
           {userRole === "employer" && (
@@ -291,10 +388,30 @@ export function Navbar() {
           )}
           {userRole === "admin" && (
             <>
-              <NavLink active={isActive("/admin/dashboard")} onClick={() => navigate("/admin/dashboard")}>Dashboard</NavLink>
-              <NavLink active={isActive("/admin/users")} onClick={() => navigate("/admin/users")}>Users</NavLink>
-              <NavLink active={isActive("/admin/moderation")} onClick={() => navigate("/admin/moderation")}>Moderation</NavLink>
-              <NavLink active={isActive("/admin/analytics")} onClick={() => navigate("/admin/analytics")}>Analytics</NavLink>
+              <NavLink
+                active={isActive("/admin/dashboard")}
+                onClick={() => navigate("/admin/dashboard")}
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                active={isActive("/admin/users")}
+                onClick={() => navigate("/admin/users")}
+              >
+                Users
+              </NavLink>
+              <NavLink
+                active={isActive("/admin/companies")}
+                onClick={() => navigate("/admin/companies")}
+              >
+                companies
+              </NavLink>
+              <NavLink
+                active={isActive("/admin/analytics")}
+                onClick={() => navigate("/admin/analytics")}
+              >
+                Analytics
+              </NavLink>
             </>
           )}
         </div>
@@ -330,7 +447,9 @@ export function Navbar() {
                     }}
                   >
                     <div className="px-5 py-3 flex items-center justify-between border-b border-slate-100">
-                      <h3 className="font-semibold text-sm text-slate-900">Notifications</h3>
+                      <h3 className="font-semibold text-sm text-slate-900">
+                        Notifications
+                      </h3>
                       <button
                         onClick={() => { setShowNotifications(false); navigate("/notifications"); }}
                         className="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
@@ -344,27 +463,67 @@ export function Navbar() {
                           <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Bell className="w-6 h-6 text-slate-300" />
                           </div>
-                          <p className="text-sm font-medium text-slate-600">No notifications yet</p>
-                          <p className="text-xs text-slate-400 mt-1">We'll let you know when something happens.</p>
+                          <p className="text-sm font-medium text-slate-600">
+                            No notifications yet
+                          </p>
+                          <p className="text-xs text-slate-400 mt-1">
+                            We'll let you know when something happens.
+                          </p>
                         </div>
                       ) : (
                         notifications.slice(0, 5).map((notif) => {
                           const getIcon = (type) => {
                             switch (type) {
-                              case "application": return <ClipboardList className="w-4 h-4" style={{ color: "#6366f1" }} />;
-                              case "job": return <Briefcase className="w-4 h-4" style={{ color: "#2563EB" }} />;
-                              case "interview": return <Calendar className="w-4 h-4" style={{ color: "#0891b2" }} />;
-                              case "system": return <Settings className="w-4 h-4" style={{ color: "#64748b" }} />;
-                              default: return <Info className="w-4 h-4" style={{ color: "#2563EB" }} />;
+                              case "application":
+                                return (
+                                  <ClipboardList
+                                    className="w-4 h-4"
+                                    style={{ color: "#6366f1" }}
+                                  />
+                                );
+                              case "job":
+                                return (
+                                  <Briefcase
+                                    className="w-4 h-4"
+                                    style={{ color: "#2563EB" }}
+                                  />
+                                );
+                              case "interview":
+                                return (
+                                  <Calendar
+                                    className="w-4 h-4"
+                                    style={{ color: "#0891b2" }}
+                                  />
+                                );
+                              case "system":
+                                return (
+                                  <Settings
+                                    className="w-4 h-4"
+                                    style={{ color: "#64748b" }}
+                                  />
+                                );
+                              default:
+                                return (
+                                  <Info
+                                    className="w-4 h-4"
+                                    style={{ color: "#2563EB" }}
+                                  />
+                                );
                             }
                           };
                           return (
                             <div
                               key={notif._id}
-                              onClick={() => { markRead(notif._id); if (notif.link) navigate(notif.link); setShowNotifications(false); }}
+                              onClick={() => {
+                                markRead(notif._id);
+                                if (notif.link) navigate(notif.link);
+                                setShowNotifications(false);
+                              }}
                               className="px-5 py-3 cursor-pointer relative flex gap-3 transition-colors hover:bg-slate-50 group"
                               style={{
-                                background: !notif.read ? "rgba(239, 246, 255, 0.4)" : "transparent",
+                                background: !notif.read
+                                  ? "rgba(239, 246, 255, 0.4)"
+                                  : "transparent",
                               }}
                             >
                               {!notif.read && (
@@ -374,14 +533,21 @@ export function Navbar() {
                                 {getIcon(notif.type)}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className={`text-sm tracking-tight ${!notif.read ? "font-bold text-slate-900" : "font-medium text-slate-600"}`}>
+                                <p
+                                  className={`text-sm tracking-tight ${!notif.read ? "font-bold text-slate-900" : "font-medium text-slate-600"}`}
+                                >
                                   {notif.title}
                                 </p>
-                                <p className={`text-xs mt-0.5 line-clamp-2 ${!notif.read ? "text-slate-700" : "text-slate-400"}`}>
+                                <p
+                                  className={`text-xs mt-0.5 line-clamp-2 ${!notif.read ? "text-slate-700" : "text-slate-400"}`}
+                                >
                                   {notif.message}
                                 </p>
                                 <p className="text-[10px] font-medium text-slate-400 mt-1.5">
-                                  {new Date(notif.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                  {new Date(notif.createdAt).toLocaleTimeString(
+                                    [],
+                                    { hour: "2-digit", minute: "2-digit" },
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -415,9 +581,13 @@ export function Navbar() {
                   ) : (
                     <div
                       className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm"
-                      style={{ background: "linear-gradient(135deg, #1e3a8a, #2563EB)" }}
+                      style={{
+                        background: "linear-gradient(135deg, #1e3a8a, #2563EB)",
+                      }}
                     >
-                      <span className="text-white text-sm font-semibold">{userName?.[0] || "U"}</span>
+                      <span className="text-white text-sm font-semibold">
+                        {userName?.[0] || "U"}
+                      </span>
                     </div>
                   )}
                   <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
@@ -435,8 +605,12 @@ export function Navbar() {
                     }}
                   >
                     <div className="px-5 py-3 border-b border-slate-100">
-                      <p className="font-semibold text-sm text-slate-900 truncate">{userName}</p>
-                      <p className="text-xs font-medium text-slate-400 capitalize mt-0.5">{userRole}</p>
+                      <p className="font-semibold text-sm text-slate-900 truncate">
+                        {userName}
+                      </p>
+                      <p className="text-xs font-medium text-slate-400 capitalize mt-0.5">
+                        {userRole}
+                      </p>
                     </div>
                     <div className="py-2">
                       <button
@@ -450,7 +624,8 @@ export function Navbar() {
                           onClick={() => { setShowUserMenu(false); navigate("/candidate/saved-jobs"); }}
                           className="cursor-pointer w-full px-5 py-2.5 text-left text-sm font-medium flex items-center gap-3 transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
                         >
-                          <Bookmark className="w-4 h-4 text-slate-400" /> Saved Jobs
+                          <Bookmark className="w-4 h-4 text-slate-400" /> Saved
+                          Jobs
                         </button>
                       )}
                     </div>
@@ -461,7 +636,11 @@ export function Navbar() {
                       disabled={isLoading}
                       className="cursor-pointer w-full px-5 py-2.5 text-left text-sm font-medium flex items-center gap-3 transition-colors text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none disabled:opacity-50"
                     >
-                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
+                      {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <LogOut className="w-4 h-4" />
+                      )}
                       Sign Out
                     </button>
                   </div>
@@ -497,7 +676,11 @@ export function Navbar() {
             onClick={() => setShowMobileMenu(!showMobileMenu)}
             className="lg:hidden mobile-menu-btn p-2.5 rounded-full transition-colors hover:bg-slate-100 text-slate-500 focus-visible:ring-2 focus-visible:ring-slate-300 focus:outline-none ml-1"
           >
-            {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {showMobileMenu ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
@@ -517,22 +700,22 @@ export function Navbar() {
       >
         <div className="p-4 space-y-1 max-h-[85vh] overflow-y-auto">
           {/* Landing page anchor links in mobile */}
-          {location.pathname === '/' && (
+          {location.pathname === "/" && (
             <div className="mb-2 pb-2 border-b border-slate-100">
               <button
-                onClick={() => scrollToSection('how-it-works')}
+                onClick={() => scrollToSection("how-it-works")}
                 className="cursor-pointer w-full px-5 py-3 text-left text-sm font-semibold rounded-2xl transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               >
                 How it works
               </button>
               <button
-                onClick={() => scrollToSection('features')}
+                onClick={() => scrollToSection("features")}
                 className="cursor-pointer w-full px-5 py-3 text-left text-sm font-semibold rounded-2xl transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               >
                 Features
               </button>
               <button
-                onClick={() => scrollToSection('testimonials')}
+                onClick={() => scrollToSection("testimonials")}
                 className="cursor-pointer w-full px-5 py-3 text-left text-sm font-semibold rounded-2xl transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               >
                 Testimonials
@@ -563,8 +746,18 @@ export function Navbar() {
           {userRole === "employer" && (
             <>
               {[
-                { label: "Dashboard", path: activeCompanyId ? `/employer/company/${activeCompanyId}` : "/employer/dashboard" },
-                { label: "Jobs", path: activeCompanyId ? `/employer/company/${activeCompanyId}/jobs` : "/employer/jobs" },
+                {
+                  label: "Dashboard",
+                  path: activeCompanyId
+                    ? `/employer/company/${activeCompanyId}`
+                    : "/employer/dashboard",
+                },
+                {
+                  label: "Jobs",
+                  path: activeCompanyId
+                    ? `/employer/company/${activeCompanyId}/jobs`
+                    : "/employer/jobs",
+                },
                 { label: "Profile", path: "/employer/profile" },
               ].map(({ label, path }) => (
                 <button
@@ -609,9 +802,14 @@ export function Navbar() {
                 Sign In
               </button>
               <button
-                onClick={() => { setShowMobileMenu(false); navigate("/register"); }}
+                onClick={() => {
+                  setShowMobileMenu(false);
+                  navigate("/register");
+                }}
                 className="w-full py-3 rounded-2xl text-sm font-semibold text-white transition-all shadow-md active:scale-95"
-                style={{ background: "linear-gradient(135deg, #2563EB, #1d4ed8)" }}
+                style={{
+                  background: "linear-gradient(135deg, #2563EB, #1d4ed8)",
+                }}
               >
                 Get Started
               </button>
@@ -626,7 +824,11 @@ export function Navbar() {
                 disabled={isLoading}
                 className="cursor-pointer w-full px-5 py-3 text-left text-sm font-semibold text-red-600 hover:bg-red-50 rounded-2xl flex items-center gap-3 disabled:opacity-50 transition-colors"
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogOut className="w-5 h-5" />}
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <LogOut className="w-5 h-5" />
+                )}
                 Sign Out
               </button>
             </div>
@@ -636,4 +838,3 @@ export function Navbar() {
     </nav>
   );
 }
-
