@@ -29,11 +29,11 @@ export default function Footer() {
           {/* Brand col */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-5">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-blue-900 to-primary-main"
-              >
-                <span className="text-white font-black text-sm">N</span>
-              </div>
+              <img
+                src="/logo_mark.png"
+                alt="Naqla Logo"
+                className="h-8 w-auto object-contain"
+              />
               <span className="font-bold text-white text-lg tracking-tight">Naqla</span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed">

@@ -94,11 +94,20 @@ export async function getJobs(params = {}) {
 }
 
 export async function getRecommendations() {
-  const { data } = await apiClient.get("/recommendations/me");
-  const raw = data?.data?.recommendations || [];
-  return raw.map(rec => ({
-    ...rec.job,
-    aiScore: rec.score,
-    aiReason: rec.reason
-  }));
+  try {
+    const { data } = await apiClient.get("/recommendations/me");
+    console.log(data);
+
+    const raw = data?.data?.recommendations || [];
+    console.log(raw);
+
+    return raw.map(rec => ({
+      ...rec.job,
+      aiScore: rec.score,
+      aiReason: rec.reason
+    }));
+  } catch (error) {
+    console.error("Failed to fetch recommendations:", error.message);
+    throw error;
+  }
 }

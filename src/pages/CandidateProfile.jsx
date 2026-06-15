@@ -108,7 +108,7 @@ export default function CandidateProfile() {
   if (loading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-blue" />
       </div>
     );
   }
@@ -138,7 +138,7 @@ export default function CandidateProfile() {
           <button
             type="button"
             onClick={() => (editing ? handleCancel() : setEditing(true))}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shrink-0 ${
+            className={`cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shrink-0 ${
               editing
                 ? "border-2 border-slate-300 text-slate-700 hover:bg-slate-50"
                 : "text-white bg-[#2563EB] hover:bg-[#1d4ed8] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.23)] hover:-translate-y-0.5 active:scale-95"

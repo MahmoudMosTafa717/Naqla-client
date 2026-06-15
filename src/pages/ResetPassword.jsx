@@ -117,7 +117,7 @@ export default function ResetPassword() {
 
             {/* Mini Inline Loader */}
             <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider animate-pulse select-none">
-              <Loader2 className="w-4 h-4 animate-spin text-brand-teal" />
+              <Loader2 className="w-4 h-4 animate-spin text-brand-blue" />
               <span>Redirecting...</span>
             </div>
           </CardContent>

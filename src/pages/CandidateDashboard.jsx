@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, TrendingUp, CheckCircle, Sparkles, ArrowRight } from "lucide-react";
+import { Briefcase, TrendingUp, CheckCircle, Sparkles, ArrowRight, Eye, FileText } from "lucide-react";
 import { Card, CardContent } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { useAuthStore } from "../store/authStore";
@@ -17,7 +17,6 @@ const ILLUSTRATIONS = [
   "/illustrations/Developer activity-rafiki.svg",
   "/illustrations/Business deal-rafiki.svg",
   "/illustrations/Business deal-pana.svg",
-  "/illustrations/File searching-rafiki.svg",
   "/illustrations/Business deal-bro.svg"
 ];
 
@@ -100,9 +99,9 @@ export default function CandidateDashboard() {
   return (
     <div className="min-h-screen bg-slate-50 animate-fade-in pb-12">
       {/* Premium Light Gradient Header */}
-      <div className="bg-white bg-gradient-to-br from-white via-blue-50/50 to-blue-100/30 pt-16 pb-32 px-4 sm:px-8 relative overflow-hidden border-b border-slate-100">
+      <div className="bg-slate-50 bg-gradient-to-br from-slate-50 via-blue-50/50 to-blue-100/30 pt-[calc(4rem+7rem)] pb-32 relative overflow-hidden border-b border-slate-200 -mt-28">
         <div className="absolute top-0 left-0 w-full h-full opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/50 via-transparent to-transparent" />
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex-1 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
               <Sparkles className="w-3.5 h-3.5" /> AI-Powered Hub
@@ -145,22 +144,26 @@ export default function CandidateDashboard() {
                       <p className="text-4xl font-black text-slate-900 mb-1 tracking-tight">
                         {insight.value}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold ${insight.trend === "up" ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-600"
-                          }`}>
-                          {insight.change}
-                        </span>
-                        <span className="text-xs font-medium text-slate-400">this week</span>
-                      </div>
+                      {(insight.label === "Profile Views" || insight.label === "Applications") && (
+                        <p className="text-sm font-semibold text-slate-500 mt-2 flex items-center gap-1.5">
+                          <span className={`px-2 py-0.5 rounded-md text-xs font-bold ${insight.trend === "up" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                            {insight.change}
+                          </span>
+                          <span>this week</span>
+                        </p>
+                      )}
                     </div>
                     <div
                       className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${insight.trend === "up" ? "bg-gradient-to-br from-blue-50 to-blue-100" : "bg-gradient-to-br from-slate-50 to-slate-100"
                         }`}
                     >
-                      <TrendingUp
-                        className={`w-7 h-7 ${insight.trend === "up" ? "text-blue-700" : "text-slate-500"
-                          }`}
-                      />
+                      {insight.label === "Profile Views" ? (
+                        <Eye className={`w-7 h-7 ${insight.trend === "up" ? "text-blue-700" : "text-slate-500"}`} />
+                      ) : insight.label === "Applications" ? (
+                        <FileText className={`w-7 h-7 ${insight.trend === "up" ? "text-blue-700" : "text-slate-500"}`} />
+                      ) : (
+                        <TrendingUp className={`w-7 h-7 ${insight.trend === "up" ? "text-blue-700" : "text-slate-500"}`} />
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -194,7 +197,7 @@ export default function CandidateDashboard() {
               ) : recommendations.length === 0 ? (
                 <Card>
                   <CardContent className="p-6 text-center text-[var(--color-muted-foreground)]">
-                    No recommendations yet. Complete your profile to get matched.
+                    No recommendations yet.
                   </CardContent>
                 </Card>
               ) : (

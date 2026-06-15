@@ -61,8 +61,10 @@ export default function SavedJobs() {
       const storedSet = new Set();
       if (Array.isArray(appsList)) {
         appsList.forEach((app) => {
-          const jId = app.jobId || app.job?._id || app.job?.id || app.id;
-          if (jId) storedSet.add(jId);
+          const job = app.jobId || app.job;
+          const jId = typeof job === "object" ? (job?._id || job?.id) : job;
+          const finalId = jId || app.id;
+          if (finalId) storedSet.add(finalId.toString());
         });
       }
       setAppliedJobIds(storedSet);

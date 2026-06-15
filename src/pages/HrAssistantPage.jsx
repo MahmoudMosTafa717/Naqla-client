@@ -195,7 +195,7 @@ export default function HrAssistantPage() {
         >
           {isHistoryLoading ? (
              <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-brand-teal" />
+                <Loader2 className="w-12 h-12 animate-spin text-brand-blue" />
                 <p className="text-sm font-medium">Initializing recruitment data...</p>
              </div>
           ) : messages.length === 0 && !sendMutation.isPending ? (

@@ -42,7 +42,7 @@ export default function ProfileSidebar({ profile, completion, onAvatarChange, on
       <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 animate-slide-up" style={{ animationDelay: '100ms' }}>
         <h2 className="font-semibold text-slate-800 mb-4">Profile Strength</h2>
         <div className="flex flex-col items-center gap-3">
-          <AIScoreCircular score={completion} size={120} strokeWidth={8} />
+          <AIScoreCircular score={completion} size={120} strokeWidth={8} label="Completion" />
           <p className="text-xs text-slate-500 text-center">
             Your profile is {completion}% complete. Add more details to improve visibility.
           </p>

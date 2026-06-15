@@ -121,8 +121,10 @@ export default function JobSearch() {
         // Add IDs from active applications fetched from backend
         if (Array.isArray(appsList)) {
           appsList.forEach((app) => {
-            const jId = app.jobId || app.job?._id || app.job?.id || app.id;
-            if (jId) storedSet.add(jId);
+            const job = app.jobId || app.job;
+            const jId = typeof job === "object" ? (job?._id || job?.id) : job;
+            const finalId = jId || app.id;
+            if (finalId) storedSet.add(finalId.toString());
           });
         }
         setAppliedJobIds(storedSet);
@@ -243,18 +245,41 @@ export default function JobSearch() {
   }
 
   const activeFilterCount =
-    selectedTypes.length + selectedLevels.length + (selectedSalary ? 1 : 0);
+    selectedTypes.length + selectedLevels.length + (selectedSalary ? 1 : 0);  return (
+    <div className="min-h-screen bg-slate-50 animate-fade-in pb-12">
+      {/* Premium Light Gradient Header */}
+      <div className="bg-slate-50 bg-gradient-to-br from-slate-50 via-blue-50/50 to-blue-100/30 pt-[calc(4rem+7rem)] pb-28 relative overflow-hidden border-b border-slate-200 -mt-28">
+        <div className="absolute top-0 left-0 w-full h-full opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/50 via-transparent to-transparent" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex-1 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5" /> Explore Careers
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+              Find Your Dream Job
+            </h1>
+            <p className="text-slate-600 text-lg sm:text-xl font-medium leading-relaxed">
+              Explore thousands of job opportunities tailored specifically to your expertise and career goals.
+            </p>
+          </div>
 
-  return (
-    <div className="min-h-screen bg-slate-50 animate-fade-in">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Page header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-6">
-            Find Your Dream Job
-          </h1>
+          <div className="hidden md:block flex-shrink-0 animate-fade-in group">
+            <img
+              src="/illustrations/File searching-rafiki.svg"
+              alt="Find Jobs Illustration"
+              className="w-80 h-80 lg:w-[420px] lg:h-[420px] object-contain drop-shadow-[0_20px_40px_rgba(37,99,235,0.15)] transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-translate-y-2"
+              style={{
+                WebkitMaskImage: "radial-gradient(circle, black 60%, transparent 100%)",
+                maskImage: "radial-gradient(circle, black 60%, transparent 100%)"
+              }}
+            />
+          </div>
+        </div>
+      </div>
 
-          {/* Search bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-14 relative z-20 space-y-8">
+        {/* Search bar and filters card */}
+        <Card className="animate-slide-up bg-white/95 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] border-white/50 p-6">
           <div className="flex gap-3">
             <div className="flex-1">
               <Input
@@ -314,7 +339,7 @@ export default function JobSearch() {
               )}
             </div>
           )}
-        </div>
+        </Card>
 
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
@@ -444,23 +469,7 @@ export default function JobSearch() {
               </CardContent>
             </Card>
 
-            {/* AI Job Alerts promo */}
-            <Card
-              className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 shadow-sm animate-slide-up"
-              style={{ animationDelay: "200ms" }}>
-              <CardContent className="p-6">
-                <Sparkles className="w-8 h-8 mb-3 text-[#2563EB]" />
-                <h3 className="font-bold mb-2 text-[#1e3a8a]">AI Job Alerts</h3>
-                <p className="text-sm text-[#1e3a8a]/70 mb-4 font-medium">
-                  Get notified when jobs matching your profile are posted
-                </p>
-                <Button
-                  variant="outline"
-                  className="w-full bg-white text-[#2563EB] border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                  Enable Alerts
-                </Button>
-              </CardContent>
-            </Card>
+
           </aside>
 
           {/* Job List */}

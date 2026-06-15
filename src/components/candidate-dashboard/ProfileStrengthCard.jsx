@@ -22,7 +22,7 @@ export default function ProfileStrengthCard({ profileCompletion, profileChecks }
         <h3 className="font-bold text-slate-900 text-lg tracking-tight">Profile Strength</h3>
       </div>
       <CardContent className="flex flex-col items-center pt-8 bg-gradient-to-b from-white to-slate-50/50">
-        <AIScoreCircular score={profileCompletion} size={140} strokeWidth={10} />
+        <AIScoreCircular score={profileCompletion} size={140} strokeWidth={10} label="Completion" />
         <div className="mt-6 w-full space-y-3">
           {CHECKS.map(({ key, done, todo }) => (
             <div key={key} className="flex items-center gap-2.5 text-sm">

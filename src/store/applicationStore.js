@@ -28,7 +28,8 @@ export const updateApplicationStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await applicationService.getCandidateApplications();
-      set({ applications: response.data || [], loading: false });
+      const apps = Array.isArray(response) ? response : (response?.data || []);
+      set({ applications: apps, loading: false });
     } catch (error) {
       set({ error: error.message || "Failed to fetch candidate applications", loading: false });
     }

@@ -58,7 +58,7 @@ export default function Login() {
 
   return (
     <AuthLayout>
-      <Card className="w-full max-w-lg border border-white/60 shadow-[0_20px_60px_-15px_rgba(37,99,235,0.1)] p-2 sm:p-4 rounded-2xl bg-white/90 backdrop-blur-xl">
+      <Card className="w-full max-w-lg p-2 sm:p-4 rounded-2xl bg-transparent border-none shadow-none">
         <CardContent className="space-y-6">
           {/* Header */}
           <div className="space-y-2">

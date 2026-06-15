@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Plus, Trash2, Briefcase, GraduationCap, Calendar, Building, AlertCircle, Sparkles } from "lucide-react";
+import { Plus, Trash2, Briefcase, GraduationCap, AlertCircle, Sparkles } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { Input, Textarea } from "../../../components/ui/Input";
+import { MonthYearPicker } from "../../../components/ui/MonthYearPicker";
 
 const emptyExperience = {
   company: "",
@@ -180,22 +181,18 @@ export default function ExperienceEducationEditor({
                       error={errors?.experience?.[index]?.company}
                       className="focus:ring-blue-500"
                     />
-                    <Input
+                    <MonthYearPicker
                       label="Start Date"
-                      type="month"
                       value={exp.startDate?.slice?.(0, 7) ?? exp.startDate ?? ""}
-                      onChange={(e) => updateExperience(index, "startDate", e.target.value)}
+                      onChange={(val) => updateExperience(index, "startDate", val)}
                       error={errors?.experience?.[index]?.startDate}
-                      className="focus:ring-blue-500"
                     />
                     {!exp.currentlyWorking && (
-                      <Input
+                      <MonthYearPicker
                         label="End Date"
-                        type="month"
                         value={exp.endDate?.slice?.(0, 7) ?? exp.endDate ?? ""}
-                        onChange={(e) => updateExperience(index, "endDate", e.target.value)}
+                        onChange={(val) => updateExperience(index, "endDate", val)}
                         error={errors?.experience?.[index]?.endDate}
-                        className="focus:ring-blue-500"
                       />
                     )}
                   </div>
@@ -356,57 +353,25 @@ export default function ExperienceEducationEditor({
                       className="focus:ring-violet-500"
                     />
                     
-                    {/* Start Year Dropdown */}
-                    <div className="w-full">
-                      <label className="block text-sm font-medium mb-2 text-slate-800">
-                        Start Year
-                      </label>
-                      <div className="relative">
-                        <select
-                          value={edu.startYear || ""}
-                          onChange={(e) => updateEducation(index, "startYear", e.target.value)}
-                          className={`w-full px-4 py-2.5 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all text-slate-700 text-sm ${
-                            errors?.education?.[index]?.startYear ? "border-red-500" : "border-slate-200"
-                          }`}
-                        >
-                          <option value="">Select Year</option>
-                          {years.map((y) => (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {errors?.education?.[index]?.startYear && (
-                        <p className="mt-1 text-sm text-red-600">{errors.education[index].startYear}</p>
-                      )}
-                    </div>
+                    {/* Start Year Picker */}
+                    <MonthYearPicker
+                      label="Start Year"
+                      yearOnly={true}
+                      value={edu.startYear ? edu.startYear.toString() : ""}
+                      onChange={(val) => updateEducation(index, "startYear", val)}
+                      error={errors?.education?.[index]?.startYear}
+                      placeholder="Select Start Year"
+                    />
 
-                    {/* End Year Dropdown */}
-                    <div className="w-full">
-                      <label className="block text-sm font-medium mb-2 text-slate-800">
-                        End Year (or Expected)
-                      </label>
-                      <div className="relative">
-                        <select
-                          value={edu.endYear || ""}
-                          onChange={(e) => updateEducation(index, "endYear", e.target.value)}
-                          className={`w-full px-4 py-2.5 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all text-slate-700 text-sm ${
-                            errors?.education?.[index]?.endYear ? "border-red-500" : "border-slate-200"
-                          }`}
-                        >
-                          <option value="">Select Year</option>
-                          {years.map((y) => (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {errors?.education?.[index]?.endYear && (
-                        <p className="mt-1 text-sm text-red-600">{errors.education[index].endYear}</p>
-                      )}
-                    </div>
+                    {/* End Year Picker */}
+                    <MonthYearPicker
+                      label="End Year (or Expected)"
+                      yearOnly={true}
+                      value={edu.endYear ? edu.endYear.toString() : ""}
+                      onChange={(val) => updateEducation(index, "endYear", val)}
+                      error={errors?.education?.[index]?.endYear}
+                      placeholder="Select End Year"
+                    />
                   </div>
                 </div>
               </div>

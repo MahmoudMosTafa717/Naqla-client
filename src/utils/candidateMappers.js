@@ -145,15 +145,15 @@ export const mapApplicationToCandidateDetails = (app) => {
   const primaryEducation = profile.education?.[0]
     ? {
         degree: profile.education[0].degree || "Not specified",
-        university: profile.education[0].school || "",
-        meta: `${profile.education[0].fieldOfStudy || ""} • ${
-          profile.education[0].startDate && !isNaN(new Date(profile.education[0].startDate).getFullYear())
+        university: profile.education[0].institution || profile.education[0].school || "",
+        meta: `${profile.education[0].field || profile.education[0].fieldOfStudy || ""} • ${
+          profile.education[0].startYear || (profile.education[0].startDate && !isNaN(new Date(profile.education[0].startDate).getFullYear())
             ? new Date(profile.education[0].startDate).getFullYear()
-            : ""
+            : "")
         } - ${
-          profile.education[0].endDate && !isNaN(new Date(profile.education[0].endDate).getFullYear())
+          profile.education[0].endYear || (profile.education[0].endDate && !isNaN(new Date(profile.education[0].endDate).getFullYear())
             ? new Date(profile.education[0].endDate).getFullYear()
-            : ""
+            : "")
         }`,
       }
     : { degree: "Not specified", university: "", meta: "" };

@@ -114,7 +114,7 @@ export default function Register() {
     <AuthLayout>
       {/* 1. ROLE SELECTION STEP */}
       {step === "role-selection" && (
-        <Card className="w-full max-w-lg border border-white/60 shadow-[0_20px_60px_-15px_rgba(37,99,235,0.1)] p-2 sm:p-4 rounded-2xl bg-white/90 backdrop-blur-xl animate-fade-in">
+        <Card className="w-full max-w-lg p-2 sm:p-4 rounded-2xl bg-transparent border-none shadow-none animate-fade-in">
           <CardContent className="space-y-6">
             {/* Header */}
             <div className="space-y-2">
@@ -182,7 +182,7 @@ export default function Register() {
 
       {/* 2. REGISTRATION FORM STEP */}
       {step === "form" && (
-        <Card className="w-full max-w-lg border border-white/60 shadow-[0_20px_60px_-15px_rgba(37,99,235,0.1)] p-2 sm:p-4 rounded-2xl bg-white/90 backdrop-blur-xl animate-fade-in">
+        <Card className="w-full max-w-lg p-2 sm:p-4 rounded-2xl bg-transparent border-none shadow-none animate-fade-in">
           <CardContent className="space-y-6">
             {/* Back Arrow & Header */}
             <div className="space-y-4">
@@ -323,7 +323,7 @@ export default function Register() {
 
       {/* 3. EMPLOYER PENDING APPROVAL STEP */}
       {step === "pending-approval" && (
-        <Card className="w-full max-w-lg border border-white/60 shadow-[0_20px_60px_-15px_rgba(37,99,235,0.1)] p-6 sm:p-8 rounded-2xl bg-white/90 backdrop-blur-xl text-center animate-fade-in">
+        <Card className="w-full max-w-lg p-6 sm:p-8 rounded-2xl bg-transparent border-none shadow-none text-center animate-fade-in">
           <CardContent className="space-y-6 flex flex-col items-center">
             {/* Illustrative Heavy Icon */}
             <div className="w-16 h-16 bg-blue-50 border border-blue-100 text-brand-blue rounded-full flex items-center justify-center shadow-sm select-none">

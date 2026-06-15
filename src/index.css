@@ -2,6 +2,13 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@layer base {
+  body {
+    background-color: var(--color-bg-page);
+    color: var(--color-foreground);
+  }
+}
+
 @theme {
   /* Design System Colors */
   --color-primary-main: #1D4ED8;

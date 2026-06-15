@@ -31,7 +31,7 @@ export function AIScoreBadge({
   );
 }
 
-export function AIScoreCircular({ score, size = 120, strokeWidth = 8, label = "Completion" }) {
+export function AIScoreCircular({ score, size = 120, strokeWidth = 8, label = "Matching score" }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (score / 100) * circumference;
@@ -75,10 +75,9 @@ export function AIScoreCircular({ score, size = 120, strokeWidth = 8, label = "C
           </span>
           <span className="text-sm font-bold text-slate-400 ml-0.5">%</span>
         </div>
-        <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest mt-1">
-          Completion
+        <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest mt-1 px-1 text-center">
+          {label}
         </span>
-        <span className="text-xs text-gray-500 font-medium">{label}</span>
       </div>
     </div>
   );

@@ -136,7 +136,7 @@ export default function AcceptInvite() {
           <div className="w-16 h-16 bg-blue-50 border border-blue-100 text-brand-blue rounded-full flex items-center justify-center animate-bounce mb-6">
             <Briefcase className="w-8 h-8 text-brand-blue" />
           </div>
-          <Loader2 className="w-10 h-10 animate-spin text-brand-teal mb-4" />
+          <Loader2 className="w-10 h-10 animate-spin text-brand-blue mb-4" />
           <h2 className="text-xl font-bold text-slate-800">
             Verifying Invitation
           </h2>
@@ -192,7 +192,7 @@ export default function AcceptInvite() {
                 HR recruiter. Redirecting to workspace...
               </p>
             </div>
-            <Loader2 className="w-6 h-6 animate-spin text-brand-teal" />
+            <Loader2 className="w-6 h-6 animate-spin text-brand-blue" />
           </CardContent>
         </Card>
       </div>

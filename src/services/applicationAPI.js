@@ -21,7 +21,7 @@ export async function applyToJob(payload) {
  */
 export async function getCandidateApplications() {
   const { data } = await apiClient.get("/v1/applications/my-applications");
-  return data;
+  return data?.data || data;
 }
 
 /**

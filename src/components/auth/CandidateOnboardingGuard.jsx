@@ -35,7 +35,7 @@ export default function CandidateOnboardingGuard() {
   if (isCandidate && status === "loading") {
     return (
       <div className="min-h-[40vh] flex items-center justify-center" role="status">
-        <Loader2 className="w-8 h-8 animate-spin text-brand-teal" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-blue" />
       </div>
     );
   }

@@ -20,7 +20,7 @@ export default function ApplicationActivityCard({ applications }) {
   return (
     <Card className="overflow-hidden border-slate-200 shadow-sm animate-slide-up" style={{ animationDelay: '200ms' }}>
       <div className="bg-slate-50/50 p-6 border-b border-slate-100 flex items-center justify-between">
-        <h3 className="font-bold text-slate-900 text-lg tracking-tight">Your Application Activity</h3>
+        <h3 className="font-bold text-slate-900 text-lg tracking-tight">Recent Application Activity</h3>
       </div>
       <CardContent>
         {applications.length === 0 ? (
@@ -43,17 +43,17 @@ export default function ApplicationActivityCard({ applications }) {
               >
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
-                    {app.role ?? app.jobTitle ?? "Role"}
+                    {app.jobId?.title ?? app.role ?? app.jobTitle ?? "Role"}
                   </h4>
                   <p className="text-sm font-medium text-slate-500 truncate">
-                    {app.company ?? app.companyName ?? ""}
+                    {app.companyId?.name ?? app.company ?? app.companyName ?? ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-4 ml-4">
-                  <Badge variant={statusVariant(app.status)}>{app.status}</Badge>
-                  {app.appliedDate && (
+                  <Badge variant={statusVariant(app.stage?.key ?? app.status)}>{app.stage?.key ?? app.status}</Badge>
+                  {(app.createdAt || app.appliedDate) && (
                     <span className="text-xs font-medium text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded-md">
-                      {new Date(app.appliedDate).toLocaleDateString()}
+                      {new Date(app.createdAt || app.appliedDate).toLocaleDateString()}
                     </span>
                   )}
                 </div>

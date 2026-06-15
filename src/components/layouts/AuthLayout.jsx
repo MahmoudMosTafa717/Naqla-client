@@ -21,7 +21,7 @@ export default function AuthLayout({ children }) {
       {/* Main Grid Content */}
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-7xl w-full mx-auto">
         {/* Left Side: Branding / Marketing (Desktop only) */}
-        <section className="lg:col-span-5 hidden lg:flex flex-col justify-center px-12 xl:px-16 py-12 text-left border-r border-[#e2e8f0]/60 bg-white/40 animate-slide-up">
+        <section className="lg:col-span-5 hidden lg:flex flex-col justify-center px-12 xl:px-16 pb-12 pt-28 lg:pt-32 text-left animate-slide-up">
           <div className="space-y-8 max-w-md">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full text-[#2563EB] text-xs font-semibold select-none w-fit">
@@ -54,7 +54,7 @@ export default function AuthLayout({ children }) {
         </section>
 
         {/* Right Side: Form / Children Container */}
-        <section className="lg:col-span-7 flex flex-col justify-center items-center p-6 sm:p-12 animate-slide-up-delayed">
+        <section className="lg:col-span-7 flex flex-col justify-center items-center p-6 sm:p-12 pt-28 sm:pt-32 animate-slide-up-delayed">
           {children}
         </section>
       </main>

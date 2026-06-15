@@ -25,17 +25,11 @@ import { AIScoreCircular } from "../components/ui/AIScoreBadge";
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalDescription, ModalFooter, ModalClose } from "../components/ui/Modal";
 import { useAuthStore } from "../store/authStore";
 import { useChatStore } from "../store/chatStore";
-import { getJobById } from "../services/jobsApi";
+import { getJobById, getRecommendations } from "../services/jobsApi";
 import { applyToJob, quickApplyToJob, getMyApplications } from "../services/applicationAPI";
 import { getSavedJobs, saveJob as saveJobApi, unsaveJob as unsaveJobApi, getCandidateProfile } from "../services/profileApi";
 
-// Mock AI analysis — until a real matching endpoint exists
-const MOCK_ANALYSIS = {
-  skills: { score: 88, details: "Your skills align strongly with the requirements" },
-  experience: { score: 82, details: "Your experience matches the role level" },
-  culture: { score: 90, details: "Company values match your preferences" },
-  education: { score: 85, details: "Educational background meets requirements" },
-};
+
 
 function formatSalary(job) {
   if (job.salaryRange) {
@@ -87,13 +81,27 @@ export default function JobDetail() {
     async function load() {
       setLoading(true);
       try {
-        const [jobRes, savedJobsData, profileData, appsList] = await Promise.all([
+        const [jobRes, savedJobsData, profileData, appsList, recs] = await Promise.all([
           getJobById(id),
           user?.role === "candidate" ? getSavedJobs() : Promise.resolve({ savedJobs: [] }),
           user?.role === "candidate" ? getCandidateProfile() : Promise.resolve(null),
-          user?.role === "candidate" ? getMyApplications().catch(() => []) : Promise.resolve([])
+          user?.role === "candidate" ? getMyApplications().catch(() => []) : Promise.resolve([]),
+          user?.role === "candidate" ? getRecommendations().catch(() => []) : Promise.resolve([])
         ]);
         const jobData = jobRes?.data ?? jobRes;
+
+        // Extract score if this job is in the recommended list
+        if (Array.isArray(recs)) {
+          const recMatch = recs.find(r => (r._id || r.id) === id);
+          if (recMatch && recMatch.aiScore != null) {
+            jobData.aiScore = recMatch.aiScore;
+          } else {
+            jobData.aiScore = null;
+          }
+        } else {
+          jobData.aiScore = null;
+        }
+
         setJob(jobData);
 
         if (savedJobsData?.savedJobs) {
@@ -107,8 +115,10 @@ export default function JobDetail() {
 
         // Check if this job is applied to in remote list
         const isAppliedRemote = Array.isArray(appsList) && appsList.some(app => {
-          const jId = app.jobId || app.job?._id || app.job?.id || app.id;
-          return jId === id;
+          const job = app.jobId || app.job;
+          const jId = typeof job === "object" ? (job?._id || job?.id) : job;
+          const finalId = jId || app.id;
+          return finalId && finalId.toString() === id.toString();
         });
 
         if (isAppliedRemote) {
@@ -192,7 +202,7 @@ export default function JobDetail() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--color-brand-teal)]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--color-brand-blue)]" />
       </div>
     );
   }
@@ -218,7 +228,7 @@ export default function JobDetail() {
   const requirements = job.requirements ?? job.requiredQualifications ?? [];
   const niceToHave = job.niceToHave ?? job.preferredQualifications ?? [];
   const benefits = job.benefits ?? [];
-  const aiScore = job.aiScore ?? 85; // fallback to static until real matching endpoint
+  const aiScore = job.aiScore ?? null;
 
   return (
     <div className="min-h-screen bg-[var(--color-background)]">
@@ -436,38 +446,16 @@ export default function JobDetail() {
           <div className="space-y-6">
 
             {/* AI Match Analysis */}
-            <Card>
-              <CardHeader>
-                <h3 className="font-semibold text-lg">AI Match Analysis</h3>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <AIScoreCircular score={aiScore} size={140} strokeWidth={10} />
-
-                <div className="w-full mt-6 space-y-4">
-                  {[
-                    { key: "skills", label: "Skills Match", Icon: Target },
-                    { key: "experience", label: "Experience", Icon: TrendingUp },
-                    { key: "culture", label: "Culture Fit", Icon: Users },
-                    { key: "education", label: "Education", Icon: Award },
-                  ].map(({ key, label, Icon }, i) => (
-                    <div key={key} className={i > 0 ? "border-t border-[var(--color-border)] pt-3" : ""}>
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-2">
-                          <Icon className="w-4 h-4 text-[var(--color-brand-teal)]" />
-                          <span className="text-sm font-medium">{label}</span>
-                        </div>
-                        <span className="text-sm font-semibold text-green-600">
-                          {MOCK_ANALYSIS[key].score}%
-                        </span>
-                      </div>
-                      <p className="text-xs text-[var(--color-muted-foreground)]">
-                        {MOCK_ANALYSIS[key].details}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {aiScore !== null && (
+              <Card>
+                <CardHeader>
+                  <h3 className="font-semibold text-lg">AI Match Analysis</h3>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center">
+                  <AIScoreCircular score={aiScore} size={140} strokeWidth={10} />
+                </CardContent>
+              </Card>
+            )}
 
             {/* About the Company */}
             <Card>
@@ -521,7 +509,9 @@ export default function JobDetail() {
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg mb-2">Ready to Apply?</h3>
                 <p className="text-sm text-blue-100 mb-4">
-                  Your profile is a {aiScore}% match for this role. Apply now to stand out!
+                  {aiScore !== null 
+                    ? `Your profile is a ${aiScore}% match for this role. Apply now to stand out!` 
+                    : `Apply now to stand out!`}
                 </p>
                 {applied ? (
                   <div className="flex items-center gap-2 text-green-200 font-medium">
