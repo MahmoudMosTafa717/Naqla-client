@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Search,
@@ -14,6 +14,22 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Skeleton } from "../components/ui/Skeleton";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "../components/ui/Table";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalFooter,
+} from "../components/ui/Modal";
 
 const ROLE_OPTIONS = ["all", "candidate", "employer", "admin"];
 
@@ -37,6 +53,7 @@ function getStatusLabel(user) {
 
 export default function AdminUsers() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("all");
   const [page, setPage] = useState(1);
@@ -103,19 +120,26 @@ export default function AdminUsers() {
   const isPending = banMutation.isPending || unbanMutation.isPending;
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="border-b border-slate-100 pb-5">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Users Management
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          View, search, and moderate all platform users.
-        </p>
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 bg-bg-page min-h-screen">
+      {/* Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-border pb-6 gap-4">
+        <div>
+          <h1 className="text-3xl md:text-[30pt] font-extrabold tracking-tight text-secondary-main font-sans leading-none">
+            Users Management
+          </h1>
+          <p className="text-[10.5pt] text-secondary-muted mt-2 font-sans">
+            View, search, and moderate all platform users.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={() => navigate("/admin/dashboard")}>
+            Back to Dashboard
+          </Button>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 w-full">
+      {/* Filters & Search */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">
         <div className="w-72 shrink-0">
           <Input
             placeholder="Search by name or email..."
@@ -136,11 +160,10 @@ export default function AdminUsers() {
                 setPage(1);
                 setIsBanned(false);
               }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${
-                role === r && !isBanned
-                  ? "bg-(--color-brand-blue) text-white"
-                  : "bg-white border border-slate-200 text-slate-600 hover:border-(--color-brand-blue)"
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 capitalize cursor-pointer font-sans ${role === r && !isBanned
+                ? "bg-primary-main text-white shadow-sm"
+                : "bg-white border border-border text-secondary-muted hover:border-primary-main hover:text-primary-main"
+                }`}
             >
               {r}
             </button>
@@ -151,11 +174,10 @@ export default function AdminUsers() {
               setRole("all");
               setPage(1);
             }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              isBanned
-                ? "bg-red-500 text-white"
-                : "bg-white border border-slate-200 text-slate-600 hover:border-red-400"
-            }`}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer font-sans ${isBanned
+              ? "bg-destructive text-white shadow-sm"
+              : "bg-white border border-border text-secondary-muted hover:border-destructive hover:text-destructive"
+              }`}
           >
             Banned
           </button>
@@ -164,114 +186,89 @@ export default function AdminUsers() {
 
       {/* Table */}
       <Card className="w-full overflow-hidden">
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-sm table-fixed">
-            <colgroup>
-              <col style={{ width: "18%" }} />
-              <col style={{ width: "25%" }} />
-              <col style={{ width: "12%" }} />
-              <col style={{ width: "15%" }} />
-              <col style={{ width: "15%" }} />
-              <col style={{ width: "15%" }} />
-            </colgroup>
-            <thead>
-              <tr className="border-b">
-                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
-                  Name
-                </th>
-                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
-                  Email
-                </th>
-                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
-                  Role
-                </th>
-                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
-                  Status
-                </th>
-                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
-                  Joined
-                </th>
-                <th className="h-10 px-4 text-left align-middle font-medium text-gray-500">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                Array.from({ length: 8 }).map((_, i) => (
-                  <tr key={i} className="border-b">
-                    {Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="p-4">
-                        <Skeleton className="h-4 w-full" />
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : users.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center text-slate-400 py-10">
-                    No users found.
-                  </td>
-                </tr>
-              ) : (
-                users.map((user) => (
-                  <tr
-                    key={user._id}
-                    className="border-b hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="p-4 font-medium text-slate-800 truncate">
-                      {user.fullName || "—"}
-                    </td>
-                    <td className="p-4 text-slate-500 truncate">
-                      {user.email}
-                    </td>
-                    <td className="p-4">
-                      <Badge variant={getRoleVariant(user.role)}>
-                        {user.role}
-                      </Badge>
-                    </td>
-                    <td className="p-4">
-                      <Badge variant={getStatusVariant(user)}>
-                        {getStatusLabel(user)}
-                      </Badge>
-                    </td>
-                    <td className="p-4 text-slate-500 text-sm">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-4">
-                      {user.role !== "admin" &&
-                        (user.isBanned ? (
-                          <button
-                            onClick={() =>
-                              setBanModal({ userId: user._id, action: "unban" })
-                            }
-                            className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-                          >
-                            <ShieldCheck className="w-4 h-4" /> Unban
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              setBanModal({ userId: user._id, action: "ban" })
-                            }
-                            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600 font-medium"
-                          >
-                            <ShieldOff className="w-4 h-4" /> Ban
-                          </button>
-                        ))}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <Table className="table-fixed">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[18%] font-sans text-secondary-muted">Name</TableHead>
+              <TableHead className="w-[25%] font-sans text-secondary-muted">Email</TableHead>
+              <TableHead className="w-[12%] font-sans text-secondary-muted">Role</TableHead>
+              <TableHead className="w-[15%] font-sans text-secondary-muted">Status</TableHead>
+              <TableHead className="w-[15%] font-sans text-secondary-muted">Joined</TableHead>
+              <TableHead className="w-[15%] font-sans text-secondary-muted">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <TableRow key={i}>
+                  {Array.from({ length: 6 }).map((_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : users.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-secondary-muted py-10 font-sans">
+                  No users found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              users.map((user) => (
+                <TableRow key={user._id}>
+                  <TableCell className="font-medium text-secondary-main font-sans truncate">
+                    {user.fullName || "—"}
+                  </TableCell>
+                  <TableCell className="text-secondary-muted font-sans truncate">
+                    {user.email}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getRoleVariant(user.role)}>
+                      {user.role}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusVariant(user)}>
+                      {getStatusLabel(user)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-secondary-muted text-sm font-sans">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {user.role !== "admin" &&
+                      (user.isBanned ? (
+                        <button
+                          onClick={() =>
+                            setBanModal({ userId: user._id, action: "unban" })
+                          }
+                          className="inline-flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-semibold cursor-pointer font-sans transition-colors"
+                        >
+                          <ShieldCheck className="w-4 h-4" /> Unban
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            setBanModal({ userId: user._id, action: "ban" })
+                          }
+                          className="inline-flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600 font-semibold cursor-pointer font-sans transition-colors"
+                        >
+                          <ShieldOff className="w-4 h-4" /> Ban
+                        </button>
+                      ))}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </Card>
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-secondary-muted font-sans">
             Page {pagination.page} of {pagination.totalPages} —{" "}
             {pagination.total} users
           </p>
@@ -297,51 +294,53 @@ export default function AdminUsers() {
       )}
 
       {/* Ban/Unban Modal */}
-      {banModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
-            <h2 className="text-lg font-bold text-slate-800">
-              {banModal.action === "ban" ? "Ban User" : "Unban User"}
-            </h2>
-            <p className="text-sm text-slate-500">
-              {banModal.action === "ban"
-                ? "This user will be suspended and blocked from the platform."
-                : "This user will be restored to active status."}
-            </p>
-            {banModal.action === "ban" && (
+      <Modal open={!!banModal} onOpenChange={(open) => { if (!open) { setBanModal(null); setBanReason(""); } }}>
+        <ModalContent className="max-w-md">
+          <ModalHeader>
+            <ModalTitle className="text-secondary-main font-sans">
+              {banModal?.action === "ban" ? "Ban User" : "Unban User"}
+            </ModalTitle>
+            <ModalDescription className="text-secondary-muted font-sans">
+              {banModal?.action === "ban"
+                ? "This user will be suspended and blocked from accessing the platform."
+                : "This user's access will be restored and they can sign in normally."}
+            </ModalDescription>
+          </ModalHeader>
+          {banModal?.action === "ban" && (
+            <div className="py-2">
               <Input
                 label="Reason (optional)"
                 placeholder="e.g. Violation of terms"
                 value={banReason}
                 onChange={(e) => setBanReason(e.target.value)}
               />
-            )}
-            <div className="flex gap-3 justify-end pt-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setBanModal(null);
-                  setBanReason("");
-                }}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={banModal.action === "ban" ? "destructive" : "primary"}
-                onClick={handleAction}
-                disabled={isPending}
-              >
-                {isPending
-                  ? "Processing..."
-                  : banModal.action === "ban"
-                    ? "Ban User"
-                    : "Unban User"}
-              </Button>
             </div>
-          </div>
-        </div>
-      )}
+          )}
+          <ModalFooter className="pt-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setBanModal(null);
+                setBanReason("");
+              }}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={banModal?.action === "ban" ? "destructive" : "primary"}
+              onClick={handleAction}
+              disabled={isPending}
+            >
+              {isPending
+                ? "Processing..."
+                : banModal?.action === "ban"
+                  ? "Ban User"
+                  : "Unban User"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

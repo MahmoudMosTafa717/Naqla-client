@@ -401,7 +401,7 @@ export function Navbar() {
                 active={isActive("/admin/companies")}
                 onClick={() => navigate("/admin/companies")}
               >
-                companies
+                Companies
               </NavLink>
               <NavLink
                 active={isActive("/admin/analytics")}

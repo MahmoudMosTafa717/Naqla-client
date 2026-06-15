@@ -22,7 +22,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer style={{ background: "#0f172a" }}>
+    <footer className="bg-secondary-main text-slate-400">
       {/* Main nav grid */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-10">
         <div className="grid lg:grid-cols-5 gap-12">
@@ -36,7 +36,7 @@ export default function Footer() {
               />
               <span className="font-bold text-white text-lg tracking-tight">Naqla</span>
             </div>
-            <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
+            <p className="text-slate-400 text-sm leading-relaxed">
               AI-powered recruitment that explains itself. Match talent to opportunity with
               transparency.
             </p>
@@ -46,8 +46,7 @@ export default function Footer() {
           {nav.map((col) => (
             <div key={col.title}>
               <p
-                className="text-xs font-bold uppercase tracking-[0.15em] mb-4"
-                style={{ color: "#475569" }}
+                className="text-xs font-bold uppercase tracking-[0.15em] mb-4 text-slate-500"
               >
                 {col.title}
               </p>
@@ -55,10 +54,7 @@ export default function Footer() {
                 {col.links.map((link) => (
                   <li key={link}>
                     <button
-                      className="text-sm transition-colors duration-150"
-                      style={{ color: "#64748b" }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
+                      className="text-sm text-slate-400 hover:text-white transition-colors duration-150 cursor-pointer"
                     >
                       {link}
                     </button>
@@ -72,20 +68,16 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div
-        className="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4"
-        style={{ borderTop: "1px solid #1e293b" }}
+        className="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-800"
       >
-        <p className="text-xs" style={{ color: "#475569" }}>
+        <p className="text-xs text-slate-500">
           © {new Date().getFullYear()} Naqla Technologies. All rights reserved.
         </p>
         <div className="flex items-center gap-4">
           {["Privacy", "Terms", "Contact"].map((item) => (
             <button
               key={item}
-              className="text-xs transition-colors duration-150"
-              style={{ color: "#475569" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#475569")}
+              className="text-xs text-slate-500 hover:text-white transition-colors duration-150 cursor-pointer"
             >
               {item}
             </button>
