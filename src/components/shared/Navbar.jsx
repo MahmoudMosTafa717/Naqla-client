@@ -32,14 +32,11 @@ function BrandLogo({ onClick }) {
       className="cursor-pointer flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full p-1 pr-3 transition-colors hover:bg-slate-50/80"
       aria-label="Naqla Homepage"
     >
-      <div
-        className="w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shrink-0 shadow-sm"
-        style={{
-          background: "linear-gradient(135deg, #1e3a8a 0%, #2563EB 100%)",
-        }}
-      >
-        <span className="text-white font-black text-base select-none">N</span>
-      </div>
+      <img
+        src="/logo_mark.png"
+        alt="Naqla Logo"
+        className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 shrink-0"
+      />
       <span
         className="font-bold text-lg tracking-tight select-none"
         style={{
